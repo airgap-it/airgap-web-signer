@@ -1,0 +1,22 @@
+{
+  "name": "airgap-ethereum-signer",
+  "version": "1.0.0",
+  "description": "An offline Ethereum signer used to generate and sign securely. Code is clean and easy to review.",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify src/app.js -o static/bundle.js",
+    "watch": "watchify src/app.js -o static/bundle.js --debug --verbose"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-preset-stage-0": "^6.24.1",
+    "bip39": "^2.3.1",
+    "bulma": "^0.4.3",
+    "ethereumjs-tx": "^1.3.1",
+    "ethereumjs-wallet": "^0.6.0"
+  },
+  "devDependencies": {
+    "standard": "^10.0.2"
+  }
+}

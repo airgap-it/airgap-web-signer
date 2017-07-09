@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AirGap.it - Offline Ethereum Signer</title>
+    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
+    <style>
+        .modal-background{
+            background-color: grey;
+        }
+    </style>
+</head>
+
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title">AirGap.it - Offline Ethereum Transaction Signer</h1>
+        <h2 class="subtitle">
+            An opensource easy to review Ethereum transaction signer. Intended to be used for air-gapped setups.
+        </h2>
+        <form>
+            <div class="field">
+                <label class="label">To Address</label>
+                <p class="control">
+                    <input id="tx_address" class="input" type="text"
+                           placeholder="0x77A562Df2B17E8b0aa78571597a78b32D7d5c86E">
+                </p>
+            </div>
+
+            <div class="field">
+                <label class="label">Amount to Send</label>
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input id="tx_amount" class="input" type="number" placeholder="0.01">
+                    </p>
+                    <p class="control">
+                        <a class="button is-static">
+                            ETH
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Gas Limit</label>
+                <p class="control">
+                    <input id="tx_gas_limit" class="input" type="number" placeholder="21000" value="21000">
+                </p>
+            </div>
+            <div class="field">
+                <label class="label">Gas Price</label>
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input id="tx_gas_price" class="input" type="number" placeholder="1" value="1">
+                    </p>
+                    <p class="control">
+                        <a class="button is-static">
+                            GWEI
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Nonce</label>
+                <p class="control">
+                    <input id="tx_nonce" class="input" type="number" placeholder="1">
+                </p>
+            </div>
+            <div class="field">
+                <label class="label">Data (optional)</label>
+                <p class="control">
+                    <input id="tx_data" class="input" type="text" placeholder="0x61697267611702e697420726f636b7321">
+                </p>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Wallet Unlock Method</label>
+                        <p class="control">
+                            <span class="select">
+                              <select id="unlock_selector">
+                                  <option selected disabled value="">-- Select Option --</option>
+                                  <option value="keystore_unlock">Keystore File (UTC / JSON)</option>
+                                  <option value="private_key_unlock">Private Key</option>
+                                  <option value="mnemonic_unlock">Mnemonic Phrase</option>
+                              </select>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div id="mnemonic_unlock" class="unlock_method" style="display: none">
+                        <div class="field">
+                            <label class="label">Mnemonic Code</label>
+                            <p class="control">
+                            <textarea id="mnemonic_unlock_mnemonic" class="textarea"
+                                      placeholder="elbow lobster slab upper vacant mutual punch sponsor glow faith custom neglect sell announce awkward"></textarea>
+                            </p>
+                        </div>
+                        <label class="label">Derivation Path</label>
+                        <p class="control">
+                            <input id="mnemonic_unlock_derivation_path" class="input" type="text"
+                                   placeholder="a secret passphrase">
+                        </p>
+                        <label class="label">Passphrase (optional)</label>
+                        <p class="control">
+                            <input id="mnemonic_unlock_passphrase" class="input" type="password"
+                                   placeholder="a secret passphrase">
+                        </p>
+
+                    </div>
+                    <div id="private_key_unlock" class="unlock_method" style="display: none">
+                        <div class="field">
+                            <label class="label">Private Key</label>
+                            <p class="control">
+                            <textarea id="private_key_unlock_key" class="textarea"
+                                      placeholder="0x395f32eea9d43817764e91ba32684369c59506d6a46ef4fbf4460fb501e76694"></textarea>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="keystore_unlock" class="unlock_method" style="display: none">
+                        <div class="field">
+                            <label class="label">Keystore File (UTC / JSON)</label>
+                            <p class="control">
+                                <input class="input" type="file" id="keystore_unlock_file">
+                            </p>
+                        </div>
+                        <label class="label">Passphrase (optional)</label>
+                        <p class="control">
+                            <input class="input" type="password" placeholder="a secret passphrase"
+                                   id="keystore_unlock_passphrase">
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="block">
+                <a id="generate_and_sign_button" class="button is-primary" style="display: none">Generate and Sign</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div id="error_modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Error</p>
+            <button class="delete"></button>
+        </header>
+        <section class="modal-card-body">
+            <span id="error_message"></span>
+            <!-- Content ... -->
+        </section>
+        <footer class="modal-card-foot">
+            <a class="button is-success">Save changes</a>
+            <a class="button">Cancel</a>
+        </footer>
+    </div>
+</div>
+
+<script src="static/bundle.js"></script>
+</body>
+</html>
