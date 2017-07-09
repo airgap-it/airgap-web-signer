@@ -5,19 +5,19 @@
     <title>AirGap.it - Offline Ethereum Signer</title>
     <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
     <style>
-        .modal-background{
+        .modal-background {
             background-color: grey;
         }
 
-        .identicon{
+        .identicon {
             width: 100%;
             height: auto;
             padding-bottom: 100%;
             background-size: cover;
             background-repeat: no-repeat;
             border-radius: 50%;
-            -webkit-box-shadow: inset hsla(0,0%,100%,.5) 0 2px 2px, inset rgba(0,0,0,.6) 0 -1px 8px;
-            box-shadow: inset 0 2px 2px hsla(0,0%,100%,.5), inset 0 -1px 8px rgba(0,0,0,.6);
+            -webkit-box-shadow: inset hsla(0, 0%, 100%, .5) 0 2px 2px, inset rgba(0, 0, 0, .6) 0 -1px 8px;
+            box-shadow: inset 0 2px 2px hsla(0, 0%, 100%, .5), inset 0 -1px 8px rgba(0, 0, 0, .6);
         }
     </style>
 </head>
@@ -29,6 +29,13 @@
         <h2 class="subtitle">
             An opensource easy to review Ethereum transaction signer. Intended to be used for air-gapped setups.
         </h2>
+
+        <video id="preview" style="height:400px;width:100%;display:none;"></video>
+        <br/>
+        <a id="startScan" class="button is-info" onclick="startScan()" style="display:table;margin: 0 auto;">Scan QR</a>
+        <a id="stopScan" class="button is-danger" onclick="stopScan()" style="display:none;margin: 0 auto;">Stop</a>
+        <br/>
+
         <form>
 
             <div class="media">
@@ -44,14 +51,14 @@
                             <p class="control">
                                 <input id="tx_to_address" class="input" type="text"
                                        placeholder="0x77A562Df2B17E8b0aa78571597a78b32D7d5c86E">
-                                    <span id="tx_to_address_error" class="help is-danger" style="display:none;">This address is invalid</span>
+                                <span id="tx_to_address_error" class="help is-danger" style="display:none;">This address is invalid</span>
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <br />
+            <br/>
 
             <div class="field">
                 <label class="label">Amount to Send</label>
