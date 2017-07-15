@@ -4,7 +4,12 @@
     number = parseInt(payload)
     return '0x' + number.toString(16)
   }
-  window.clearSecrets = function () {
+
+  const validateAddress = new RegExp('^(0x)?[0-9a-fA-F]{40}$');
+  const Instascan = require('instascan');
+  var scanner;
+
+    window.clearSecrets = function () {
     document.getElementById('mnemonic_unlock_mnemonic').value = ""
     document.getElementById('mnemonic_unlock_passphrase').value = ""
     document.getElementById('private_key_unlock_key').value = ""
@@ -53,7 +58,7 @@
           nonce: numberToEthereumHex(document.getElementById('tx_nonce').value),
           gasPrice: numberToEthereumHex(document.getElementById('tx_gas_price').value),
           gasLimit: numberToEthereumHex(document.getElementById('tx_gas_limit').value),
-          to: document.getElementById('tx_address').value,
+          to: document.getElementById('tx_to_address').value,
           value: numberToEthereumHex(document.getElementById('tx_amount').value),
           data: document.getElementById('tx_data').value,
           // EIP 155 chainId - mainnet: 1, ropsten: 3
@@ -65,6 +70,50 @@
       }, errorCallback)
     } catch (error) {
       errorCallback(error.message)
+    }
+  }
+
+    window.startScan = function () {
+        document.getElementById("startScan").style.display = 'none';
+        document.getElementById("stopScan").style.display = 'table';
+        document.getElementById("preview").style.display = 'inherit';
+        scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        scanner.addListener('scan', function (content) {
+            console.log(content);
+        });
+        Instascan.Camera.getCameras().then(function (cameras) {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+            } else {
+                console.error('No cameras found.');
+            }
+        }).catch(function (e) {
+            console.error(e);
+        });
+    };
+
+    window.stopScan = function () {
+        document.getElementById("startScan").style.display = 'table';
+        document.getElementById("stopScan").style.display = 'none';
+        document.getElementById("preview").style.display = 'none';
+        if(scanner){
+          scanner.stop();
+          scanner = null;
+        }
+    }
+
+        document.getElementById('tx_to_address').onchange = function(){
+    var value = document.getElementById('tx_to_address').value.toLowerCase();
+    if(validateAddress.test(value)){
+        document.getElementById('to_identicon').src = blockies.create({ seed: value }).toDataURL();
+        document.getElementById('to_identicon').style.paddingBottom = "0";
+        document.getElementById("tx_to_address").className = document.getElementById("tx_to_address").className.replace(/\is-danger\b/,'');
+        document.getElementById("tx_to_address_error").style.display = 'none';
+    }else{
+        document.getElementById('to_identicon').src = '';
+        document.getElementById('to_identicon').style.paddingBottom = "64%";
+        document.getElementById('tx_to_address').className += " is-danger";
+        document.getElementById("tx_to_address_error").style.display = 'inherit';
     }
   }
 
