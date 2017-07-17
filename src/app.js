@@ -1,19 +1,19 @@
 (function () {
-
   var numberToEthereumHex = function (payload) {
     number = parseInt(payload)
     return '0x' + number.toString(16)
   }
 
-  const validateAddress = new RegExp('^(0x)?[0-9a-fA-F]{40}$');
-  const Instascan = require('instascan');
-  var scanner;
+  const validateAddress = new RegExp('^(0x)?[0-9a-fA-F]{40}$')
+  const Instascan = require('instascan')
+  const blockies = require('ethereum-blockies/blockies')
+  var scanner
 
-    window.clearSecrets = function () {
-    document.getElementById('mnemonic_unlock_mnemonic').value = ""
-    document.getElementById('mnemonic_unlock_passphrase').value = ""
-    document.getElementById('private_key_unlock_key').value = ""
-    document.getElementById('keystore_unlock_passphrase').value = ""
+  window.clearSecrets = function () {
+    document.getElementById('mnemonic_unlock_mnemonic').value = ''
+    document.getElementById('mnemonic_unlock_passphrase').value = ''
+    document.getElementById('private_key_unlock_key').value = ''
+    document.getElementById('keystore_unlock_passphrase').value = ''
   }
   window.unlockWallet = function (successCallback, errorCallback) {
     try {
@@ -40,7 +40,7 @@
           const bip39 = require('bip39')
           const hdkey = require('ethereumjs-wallet/hdkey')
           const seed = bip39.mnemonicToSeed(document.getElementById('mnemonic_unlock_mnemonic').value, document.getElementById('mnemonic_unlock_passphrase').value)
-          const hdWallet = hdkey.hdkeyfromMasterSeed(seed)
+          const hdWallet = hdkey.fromMasterSeed(seed)
           const hdNode = hdWallet.derivePath(document.getElementById('mnemonic_unlock_derivation_path').value)
           successCallback(hdNode.getWallet())
           break
@@ -73,47 +73,47 @@
     }
   }
 
-    window.startScan = function () {
-        document.getElementById("startScan").style.display = 'none';
-        document.getElementById("stopScan").style.display = 'table';
-        document.getElementById("preview").style.display = 'inherit';
-        scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-        scanner.addListener('scan', function (content) {
-            console.log(content);
-        });
-        Instascan.Camera.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-            } else {
-                console.error('No cameras found.');
-            }
-        }).catch(function (e) {
-            console.error(e);
-        });
-    };
+  window.startScan = function () {
+    document.getElementById('startScan').style.display = 'none'
+    document.getElementById('stopScan').style.display = 'table'
+    document.getElementById('preview').style.display = 'inherit'
+    scanner = new Instascan.Scanner({video: document.getElementById('preview')})
+    scanner.addListener('scan', function (content) {
+      console.log(content)
+    })
+    Instascan.Camera.getCameras().then(function (cameras) {
+      if (cameras.length > 0) {
+        scanner.start(cameras[0])
+      } else {
+        console.error('No cameras found.')
+      }
+    }).catch(function (e) {
+      console.error(e)
+    })
+  }
 
-    window.stopScan = function () {
-        document.getElementById("startScan").style.display = 'table';
-        document.getElementById("stopScan").style.display = 'none';
-        document.getElementById("preview").style.display = 'none';
-        if(scanner){
-          scanner.stop();
-          scanner = null;
-        }
+  window.stopScan = function () {
+    document.getElementById('startScan').style.display = 'table'
+    document.getElementById('stopScan').style.display = 'none'
+    document.getElementById('preview').style.display = 'none'
+    if (scanner) {
+      scanner.stop()
+      scanner = null
     }
+  }
 
-        document.getElementById('tx_to_address').onchange = function(){
-    var value = document.getElementById('tx_to_address').value.toLowerCase();
-    if(validateAddress.test(value)){
-        document.getElementById('to_identicon').src = blockies.create({ seed: value }).toDataURL();
-        document.getElementById('to_identicon').style.paddingBottom = "0";
-        document.getElementById("tx_to_address").className = document.getElementById("tx_to_address").className.replace(/\is-danger\b/,'');
-        document.getElementById("tx_to_address_error").style.display = 'none';
-    }else{
-        document.getElementById('to_identicon').src = '';
-        document.getElementById('to_identicon').style.paddingBottom = "64%";
-        document.getElementById('tx_to_address').className += " is-danger";
-        document.getElementById("tx_to_address_error").style.display = 'inherit';
+  document.getElementById('tx_to_address').onchange = function () {
+    const value = document.getElementById('tx_to_address').value.toLowerCase()
+    if (validateAddress.test(value)) {
+      document.getElementById('to_identicon').src = blockies.create({seed: value}).toDataURL()
+      document.getElementById('to_identicon').style.paddingBottom = '0'
+      document.getElementById('tx_to_address').className = document.getElementById('tx_to_address').className.replace(/\is-danger\b/, '')
+      document.getElementById('tx_to_address_error').style.display = 'none'
+    } else {
+      document.getElementById('to_identicon').src = ''
+      document.getElementById('to_identicon').style.paddingBottom = '64%'
+      document.getElementById('tx_to_address').className += ' is-danger'
+      document.getElementById('tx_to_address_error').style.display = 'inherit'
     }
   }
 
@@ -129,8 +129,9 @@
 
   document.getElementById('generate_and_sign_button').onclick = function () {
     window.generateAndSignTransaction(function (tx) {
+
       //window.clearSecrets()
-      alert(tx)
+      alert(tx.from)
     }, function (errorMessage) {
       document.getElementById('error_message').textContent = errorMessage
       document.getElementById('error_modal').classList.add('is-active')
