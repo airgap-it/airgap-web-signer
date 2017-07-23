@@ -178,15 +178,52 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Error</p>
-            <button class="delete"></button>
+            <button class="delete" onclick="dismissErrorModal()"></button>
         </header>
         <section class="modal-card-body">
             <span id="error_message"></span>
             <!-- Content ... -->
         </section>
         <footer class="modal-card-foot">
-            <a class="button is-success">Save changes</a>
-            <a class="button">Cancel</a>
+            <a class="button" onclick="dismissErrorModal()">Cancel</a>
+        </footer>
+    </div>
+</div>
+
+<div id="confirm_modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Your Signed Transaction</p>
+            <button class="delete" onclick="dismissConfirmModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="columns is-fullwidth">
+                <div class="column">
+                    <p class="image is-64x64">
+                        <img class="identicon" id="from_identicon_confirm">
+                    </p>
+                </div>
+                <div class="column has-text-centered">
+                    &#8594;
+                    <br>
+                    <strong><span id="amount_confirm"></span></strong> ETH
+                </div>
+                <div class="column">
+                    <p class="image is-64x64 is-pulled-right">
+                        <img class="identicon" id="to_identicon_confirm">
+                    </p>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter">
+                    <figure id="qr_holder" class="image is-square">
+                    </figure>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <a class="button" onclick="dismissErrorModal()">Cancel</a>
         </footer>
     </div>
 </div>
