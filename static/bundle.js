@@ -60038,6 +60038,7 @@ module.exports = {
 };
 
 },{}],445:[function(require,module,exports){
+(function (Buffer){
 'use strict';
 
 var _instascan = require('instascan');
@@ -60066,7 +60067,7 @@ var hdkey = _interopRequireWildcard(_hdkey);
 
 var _ethereumjsTx = require('ethereumjs-tx');
 
-var ethereumTx = _interopRequireWildcard(_ethereumjsTx);
+var _ethereumjsTx2 = _interopRequireDefault(_ethereumjsTx);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -60118,7 +60119,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
           reader.readAsText(document.getElementById('keystore_unlock_file').files[0]);
           break;
         case 'private_key_unlock':
-          var wallet = ethereumjsWallet.fromPrivateKey(document.getElementById('private_key_unlock_key').value);
+          var wallet = ethereumjsWallet.fromPrivateKey(Buffer.from(document.getElementById('private_key_unlock_key').value.replace('0x', ''), 'hex'));
           successCallback(wallet);
           break;
         case 'mnemonic_unlock':
@@ -60148,7 +60149,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
           // EIP 155 chainId - mainnet: 1, ropsten: 3
           chainId: 1
         };
-        var tx = new ethereumTx(txParams);
+        var tx = new _ethereumjsTx2.default(txParams);
         tx.sign(wallet.getPrivateKey());
         successCallback(tx);
       }, errorCallback);
@@ -60253,7 +60254,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   document.getElementById('disclaimer_modal').classList.add('is-active');
 })();
 
-},{"./vendors/blockies/blockies":446,"bip39":3,"ethereumjs-tx":334,"ethereumjs-wallet":338,"ethereumjs-wallet/hdkey":337,"instascan":358,"qrcode/lib/browser":379}],446:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"./vendors/blockies/blockies":446,"bip39":3,"buffer":495,"ethereumjs-tx":334,"ethereumjs-wallet":338,"ethereumjs-wallet/hdkey":337,"instascan":358,"qrcode/lib/browser":379}],446:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

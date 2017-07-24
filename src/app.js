@@ -4,7 +4,7 @@ import * as qrcode from 'qrcode/lib/browser'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 import * as bip39 from 'bip39'
 import * as hdkey from 'ethereumjs-wallet/hdkey'
-import * as ethereumTx from 'ethereumjs-tx'
+import ethereumTx from 'ethereumjs-tx'
 
 (function () {
   const WEIINETHER = 1000000000000000000
@@ -52,7 +52,7 @@ import * as ethereumTx from 'ethereumjs-tx'
           reader.readAsText(document.getElementById('keystore_unlock_file').files[0])
           break
         case 'private_key_unlock':
-          const wallet = ethereumjsWallet.fromPrivateKey(document.getElementById('private_key_unlock_key').value)
+          const wallet = ethereumjsWallet.fromPrivateKey(Buffer.from(document.getElementById('private_key_unlock_key').value.replace('0x',''), 'hex'))
           successCallback(wallet)
           break
         case 'mnemonic_unlock':
