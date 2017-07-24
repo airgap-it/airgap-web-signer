@@ -8,7 +8,7 @@
     "watch": "watchify src/app.js -t [ babelify --presets [ es2015 ] ] -o static/bundle.js --debug --verbose"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "babel-preset-stage-0": "^6.24.1",
     "babelify": "^7.3.0",
