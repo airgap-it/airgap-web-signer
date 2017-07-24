@@ -1,22 +1,21 @@
 import instascan from 'instascan'
-import { toDataUrl } from './vendor/blockies/blockies'
-import qrcode from 'qrcode-generator/qrcode'
+import * as blockies from './vendor/blockies/blockies'
+import * as qrcode from 'qrcode/lib/browser'
 
 (function () {
-  var WEIINETHER = 1000000000000000000
-  var WEIINGWEI = 1000000000
+  const WEIINETHER = 1000000000000000000
+  const WEIINGWEI = 1000000000
 
-  var numberToEthereumHex = function (payload) {
+  const numberToEthereumHex = function (payload) {
     try {
       var number
-      if (isNaN(payload)){
+      if (isNaN(payload)) {
         number = parseInt(payload)
       } else {
         number = payload
       }
       return '0x' + number.toString(16)
     } catch (e) {
-      console.log(e)
       return '0x'
     }
   }
@@ -31,6 +30,8 @@ import qrcode from 'qrcode-generator/qrcode'
     document.getElementById('private_key_unlock_key').value = ''
     document.getElementById('keystore_unlock_passphrase').value = ''
   }
+
+  // -- Important part for Review ---
   window.unlockWallet = function (successCallback, errorCallback) {
     try {
       switch (document.getElementById('unlock_selector').value) {
@@ -66,22 +67,21 @@ import qrcode from 'qrcode-generator/qrcode'
     }
   }
 
+  // -- Important part for Review ---
   window.generateAndSignTransaction = function (successCallback, errorCallback) {
     try {
       window.unlockWallet(function (wallet) {
         const ethereumTx = require('ethereumjs-tx')
-        console.log(document.getElementById('tx_amount').value)
         const txParams = {
           nonce: numberToEthereumHex(document.getElementById('tx_nonce').value),
-          gasPrice: numberToEthereumHex(document.getElementById('tx_gas_price').value*WEIINGWEI),
+          gasPrice: numberToEthereumHex(document.getElementById('tx_gas_price').value * WEIINGWEI),
           gasLimit: numberToEthereumHex(document.getElementById('tx_gas_limit').value),
           to: document.getElementById('tx_to_address').value,
-          value: numberToEthereumHex(document.getElementById('tx_amount').value*WEIINETHER),
+          value: numberToEthereumHex(document.getElementById('tx_amount').value * WEIINETHER),
           data: document.getElementById('tx_data').value,
           // EIP 155 chainId - mainnet: 1, ropsten: 3
           chainId: 1
         }
-        console.log(txParams)
         const tx = new ethereumTx(txParams)
         tx.sign(wallet.getPrivateKey())
         successCallback(tx)
@@ -97,7 +97,7 @@ import qrcode from 'qrcode-generator/qrcode'
     document.getElementById('preview').style.display = 'inherit'
     scanner = new instascan.Scanner({video: document.getElementById('preview')})
     scanner.addListener('scan', function (content) {
-      console.log(content)
+      document.getElementById('tx_to_address').value = content
     })
     instascan.Camera.getCameras().then(function (cameras) {
       if (cameras.length > 0) {
@@ -123,7 +123,7 @@ import qrcode from 'qrcode-generator/qrcode'
   document.getElementById('tx_to_address').onchange = function () {
     const value = document.getElementById('tx_to_address').value.toLowerCase()
     if (validateAddress.test(value)) {
-      document.getElementById('to_identicon').src = toDataUrl(value)
+      document.getElementById('to_identicon').src = blockies.toDataUrl(value)
       document.getElementById('to_identicon').style.paddingBottom = '0'
       document.getElementById('tx_to_address').className = document.getElementById('tx_to_address').className.replace(/\is-danger\b/, '')
       document.getElementById('tx_to_address_error').style.display = 'none'
@@ -137,42 +137,52 @@ import qrcode from 'qrcode-generator/qrcode'
 
   // interaction used for secret providing by user
   document.getElementById('unlock_selector').onchange = function () {
-    var unlock_methods = document.getElementsByClassName('unlock_method')
+
+    const unlock_methods = document.getElementsByClassName('unlock_method')
     for (var i = 0; i < unlock_methods.length; i++) {
       unlock_methods[i].style.display = 'none'
     }
+
+    const requiredUnlockFields = this.getElementsByClassName('required_unlock_field')
+    for (var i = 0; i < requiredUnlockFields.length; i++) {
+      requiredUnlockFields[i].required = false
+    }
+
+    const thisRequiredUnlockFields = document.getElementById(this.value).getElementsByClassName('required_unlock_field')
+    for (var i = 0; i < thisRequiredUnlockFields.length; i++) {
+      thisRequiredUnlockFields[i].required = true
+    }
+
     document.getElementById(this.value).style.display = 'block'
     document.getElementById('generate_and_sign_button').style.display = 'block'
   }
 
-  document.getElementById('generate_and_sign_button').onclick = function () {
+  document.getElementById('transaction_form').onsubmit = function (event) {
+    event.preventDefault()
     window.generateAndSignTransaction(function (tx) {
-      //window.clearSecrets()
-      console.log(tx.from)
-      console.log(tx.value)
-      document.getElementById('from_identicon_confirm').src = toDataUrl("0x"+tx.from.toString('hex'))
+      document.getElementById('from_identicon_confirm').src = blockies.toDataUrl('0x' + tx.from.toString('hex'))
       document.getElementById('from_identicon_confirm').style.paddingBottom = '0'
-      document.getElementById('to_identicon_confirm').src = toDataUrl("0x"+tx.to.toString('hex'))
+      document.getElementById('to_identicon_confirm').src = blockies.toDataUrl('0x' + tx.to.toString('hex'))
       document.getElementById('to_identicon_confirm').style.paddingBottom = '0'
-      document.getElementById('amount_confirm').textContent = parseInt(tx.value.toString('hex'), 16)/WEIINETHER
+      document.getElementById('amount_confirm').textContent = parseInt(tx.value.toString('hex'), 16) / WEIINETHER
+      document.getElementById('fee_confirm').textContent = (parseInt(tx.gas.toString('hex'), 16) * parseInt(tx.gasPrice.toString('hex'), 16)) / WEIINETHER
       document.getElementById('confirm_modal').classList.add('is-active')
-      const typeNumber = 10
-      const errorCorrectionLevel = 'L'
-      const qr = qrcode(typeNumber, errorCorrectionLevel)
-      qr.addData(tx.serialize().toString('hex'))
-      qr.make()
-      document.getElementById('qr_holder').innerHTML = qr.createImgTag();
+      qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
+        document.getElementById('qr_holder').src = url
+      })
     }, function (errorMessage) {
       document.getElementById('error_message').textContent = errorMessage
       document.getElementById('error_modal').classList.add('is-active')
     })
   }
 
-  window.dismissErrorModal = function () {
-    document.getElementById('error_modal').classList.remove('is-active')
+  window.showModal = function (modalId) {
+    document.getElementById(modalId).classList.add('is-active')
   }
 
-  window.dismissConfirmModal = function () {
-    document.getElementById('confirm_modal').classList.remove('is-active')
+  window.dismissModal = function (modalId) {
+    document.getElementById(modalId).classList.remove('is-active')
   }
+
+  document.getElementById('disclaimer_modal').classList.add('is-active')
 })()

@@ -1,3 +1,0 @@
-[submodule "src/vendor/blockies"]
-	path = src/vendor/blockies
-	url = https://github.com/MyEtherWallet/blockies.git
