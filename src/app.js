@@ -1,6 +1,10 @@
 import instascan from 'instascan'
-import * as blockies from './vendor/blockies/blockies'
+import * as blockies from './vendors/blockies/blockies'
 import * as qrcode from 'qrcode/lib/browser'
+import * as ethereumjsWallet from 'ethereumjs-wallet'
+import * as bip39 from 'bip39'
+import * as hdkey from 'ethereumjs-wallet/hdkey'
+import * as ethereumTx from 'ethereumjs-tx'
 
 (function () {
   const WEIINETHER = 1000000000000000000
@@ -38,7 +42,6 @@ import * as qrcode from 'qrcode/lib/browser'
         case 'keystore_unlock':
           var reader = new FileReader()
           reader.onload = function () {
-            const ethereumjsWallet = require('ethereumjs-wallet')
             try {
               const wallet = ethereumjsWallet.fromV3(JSON.parse(reader.result.toLowerCase()), document.getElementById('keystore_unlock_passphrase').value)
               successCallback(wallet)
@@ -49,13 +52,10 @@ import * as qrcode from 'qrcode/lib/browser'
           reader.readAsText(document.getElementById('keystore_unlock_file').files[0])
           break
         case 'private_key_unlock':
-          const ethereumjsWallet = require('ethereumjs-wallet')
           const wallet = ethereumjsWallet.fromPrivateKey(document.getElementById('private_key_unlock_key').value)
           successCallback(wallet)
           break
         case 'mnemonic_unlock':
-          const bip39 = require('bip39')
-          const hdkey = require('ethereumjs-wallet/hdkey')
           const seed = bip39.mnemonicToSeed(document.getElementById('mnemonic_unlock_mnemonic').value, document.getElementById('mnemonic_unlock_passphrase').value)
           const hdWallet = hdkey.fromMasterSeed(seed)
           const hdNode = hdWallet.derivePath(document.getElementById('mnemonic_unlock_derivation_path').value)
@@ -71,7 +71,7 @@ import * as qrcode from 'qrcode/lib/browser'
   window.generateAndSignTransaction = function (successCallback, errorCallback) {
     try {
       window.unlockWallet(function (wallet) {
-        const ethereumTx = require('ethereumjs-tx')
+
         const txParams = {
           nonce: numberToEthereumHex(document.getElementById('tx_nonce').value),
           gasPrice: numberToEthereumHex(document.getElementById('tx_gas_price').value * WEIINGWEI),

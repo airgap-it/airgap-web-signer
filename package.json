@@ -1,6 +1,6 @@
 {
   "name": "airgap-ethereum-signer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An offline Ethereum signer used to generate and sign securely. Code is clean and easy to review.",
   "main": "index.js",
   "scripts": {
