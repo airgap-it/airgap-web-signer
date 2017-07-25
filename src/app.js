@@ -92,12 +92,13 @@ import ethereumTx from 'ethereumjs-tx'
   }
 
   window.startScan = function () {
-    document.getElementById('startScan').style.display = 'none'
-    document.getElementById('stopScan').style.display = 'table'
-    document.getElementById('preview').style.display = 'inherit'
+    showModal('qr_modal')
     scanner = new instascan.Scanner({video: document.getElementById('preview')})
     scanner.addListener('scan', function (content) {
-      document.getElementById('tx_to_address').value = content
+      var tx = JSON.parse(content)
+      document.getElementById('tx_nonce').value = tx.nonce
+      document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
+      stopScan()
     })
     instascan.Camera.getCameras().then(function (cameras) {
       if (cameras.length > 0) {
@@ -111,9 +112,7 @@ import ethereumTx from 'ethereumjs-tx'
   }
 
   window.stopScan = function () {
-    document.getElementById('startScan').style.display = 'table'
-    document.getElementById('stopScan').style.display = 'none'
-    document.getElementById('preview').style.display = 'none'
+    dismissModal('qr_modal')
     if (scanner) {
       scanner.stop()
       scanner = null

@@ -50,7 +50,6 @@
             An opensource easy to review Ethereum transaction signer. Intended to be used for air-gapped setups.
         </h2>
 
-        <video id="preview" style="height:400px;width:100%;display:none;"></video>
         <br/>
 
         <form id="transaction_form">
@@ -69,12 +68,6 @@
                                        type="text"
                                        placeholder="0x77A562Df2B17E8b0aa78571597a78b32D7d5c86E">
                                 <span id="tx_to_address_error" class="help is-danger" style="display:none;">This address is invalid</span>
-                            </p>
-                            <p class="control">
-                                <a id="startScan" class="button is-info" onclick="startScan()"
-                                   style="display:table;margin: 0 auto;">Scan QR</a>
-                                <a id="stopScan" class="button is-danger" onclick="stopScan()"
-                                   style="display:none;margin: 0 auto;">Stop</a>
                             </p>
                         </div>
                     </div>
@@ -113,13 +106,23 @@
                             GWEI
                         </a>
                     </p>
+                    <p class="control">
+                        <a id="startScan" class="button is-info" onclick="startScan()"
+                           style="display:table;margin: 0 auto;">Scan QR</a>
+                    </p>
                 </div>
             </div>
             <div class="field">
                 <label class="label">Nonce</label>
-                <p class="control">
-                    <input required id="tx_nonce" class="input" type="number" placeholder="1">
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input required id="tx_nonce" class="input" type="number" placeholder="1">
                 </p>
+                <p class="control">
+                    <a id="startScan" class="button is-info" onclick="startScan()"
+                       style="display:table;margin: 0 auto;">Scan QR</a>
+                </p>
+                </div>
             </div>
             <div class="field">
                 <label class="label">Data (optional)</label>
@@ -255,6 +258,17 @@
         <footer class="modal-card-foot">
             <a class="button" onclick="dismissModal('error_modal')">Cancel</a>
         </footer>
+    </div>
+</div>
+
+<div id="qr_modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Scan QR</p>
+            <button class="delete" onclick="stopScan()"></button>
+        </header>
+        <video id="preview" style="height:400px;width:100%;"></video>
     </div>
 </div>
 
