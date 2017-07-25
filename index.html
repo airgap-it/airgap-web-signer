@@ -225,7 +225,6 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Your Signed Transaction</p>
-            <button class="delete" onclick="dismissModal('confirm_modal')"></button>
         </header>
         <section class="modal-card-body">
             <div class="columns is-fullwidth">
@@ -256,7 +255,8 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <a class="button" onclick="dismissModal('error_modal')">Cancel</a>
+            <a class="button" onclick="dismissModal('confirm_modal')">Cancel</a>
+            <a class="button" onclick="donate()">Donate</a>
         </footer>
     </div>
 </div>
@@ -354,6 +354,51 @@
         <footer class="modal-card-foot">
             <a class="button" onclick="dismissModal('disclaimer_modal')">OK</a>
         </footer>
+    </div>
+</div>
+
+
+<div id="donate_modal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Help us</p>
+            <button class="delete" onclick="dismissModal('donate_modal')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>
+                Make a gift to support our effort in developing free and open source software. Through the generosity of people like you, our work can make a difference.
+            </p>
+
+            <br />
+
+            <div class="field">
+                <label class="label">Amount to Donate</label>
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input required id="amount_donate" value="0.1" class="input" type="number" placeholder="0.01">
+                    </p>
+                    <p class="control">
+                        <a class="button is-static">
+                            ETH
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Nonce</label>
+                <div class="field has-addons">
+                    <p class="control is-expanded">
+                        <input required id="nonce_donate" class="input" type="number" placeholder="1">
+                    </p>
+                </div>
+            </div>
+
+            <figure class="image is-square">
+                <img id="qr_donate_holder" src="#">
+            </figure>
+        </section>
     </div>
 </div>
 
