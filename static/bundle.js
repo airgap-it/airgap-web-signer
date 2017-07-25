@@ -24866,7 +24866,7 @@ module.exports={
         "spec": ">=6.2.3 <7.0.0",
         "type": "range"
       },
-      "/Users/ale/Documents/Programming/crypto/airgap-ethereum-signer/node_modules/secp256k1"
+      "/Users/lukasschonbachler/WebstormProjects/airgap-web-signer/node_modules/secp256k1"
     ]
   ],
   "_from": "elliptic@>=6.2.3 <7.0.0",
@@ -24900,7 +24900,7 @@ module.exports={
   "_shasum": "cac9af8762c85836187003c8dfe193e5e2eae5df",
   "_shrinkwrap": null,
   "_spec": "elliptic@^6.2.3",
-  "_where": "/Users/ale/Documents/Programming/crypto/airgap-ethereum-signer/node_modules/secp256k1",
+  "_where": "/Users/lukasschonbachler/WebstormProjects/airgap-web-signer/node_modules/secp256k1",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -24960,7 +24960,8 @@ module.exports={
   ],
   "name": "elliptic",
   "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
+  "readme": "# Elliptic [![Build Status](https://secure.travis-ci.org/indutny/elliptic.png)](http://travis-ci.org/indutny/elliptic) [![Coverage Status](https://coveralls.io/repos/indutny/elliptic/badge.svg?branch=master&service=github)](https://coveralls.io/github/indutny/elliptic?branch=master) [![Code Climate](https://codeclimate.com/github/indutny/elliptic/badges/gpa.svg)](https://codeclimate.com/github/indutny/elliptic)\n\n[![Saucelabs Test Status](https://saucelabs.com/browser-matrix/gh-indutny-elliptic.svg)](https://saucelabs.com/u/gh-indutny-elliptic)\n\nFast elliptic-curve cryptography in a plain javascript implementation.\n\nNOTE: Please take a look at http://safecurves.cr.yp.to/ before choosing a curve\nfor your cryptography operations.\n\n## Incentive\n\nECC is much slower than regular RSA cryptography, the JS implementations are\neven more slower.\n\n## Benchmarks\n\n```bash\n$ node benchmarks/index.js\nBenchmarking: sign\nelliptic#sign x 262 ops/sec ±0.51% (177 runs sampled)\neccjs#sign x 55.91 ops/sec ±0.90% (144 runs sampled)\n------------------------\nFastest is elliptic#sign\n========================\nBenchmarking: verify\nelliptic#verify x 113 ops/sec ±0.50% (166 runs sampled)\neccjs#verify x 48.56 ops/sec ±0.36% (125 runs sampled)\n------------------------\nFastest is elliptic#verify\n========================\nBenchmarking: gen\nelliptic#gen x 294 ops/sec ±0.43% (176 runs sampled)\neccjs#gen x 62.25 ops/sec ±0.63% (129 runs sampled)\n------------------------\nFastest is elliptic#gen\n========================\nBenchmarking: ecdh\nelliptic#ecdh x 136 ops/sec ±0.85% (156 runs sampled)\n------------------------\nFastest is elliptic#ecdh\n========================\n```\n\n## API\n\n### ECDSA\n\n```javascript\nvar EC = require('elliptic').ec;\n\n// Create and initialize EC context\n// (better do it once and reuse it)\nvar ec = new EC('secp256k1');\n\n// Generate keys\nvar key = ec.genKeyPair();\n\n// Sign message (must be an array, or it'll be treated as a hex sequence)\nvar msg = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];\nvar signature = key.sign(msg);\n\n// Export DER encoded signature in Array\nvar derSign = signature.toDER();\n\n// Verify signature\nconsole.log(key.verify(msg, derSign));\n\n// CHECK WITH NO PRIVATE KEY\n\n// Public key as '04 + x + y'\nvar pub = '04bb1fa3...';\n\n// Signature MUST be either:\n// 1) hex-string of DER-encoded signature; or\n// 2) DER-encoded signature as buffer; or\n// 3) object with two hex-string properties (r and s)\n\nvar signature = 'b102ac...'; // case 1\nvar signature = new Buffer('...'); // case 2\nvar signature = { r: 'b1fc...', s: '9c42...' }; // case 3\n\n// Import public key\nvar key = ec.keyFromPublic(pub, 'hex');\n\n// Verify signature\nconsole.log(key.verify(msg, signature));\n```\n\n### EdDSA\n\n```javascript\nvar EdDSA = require('elliptic').eddsa;\n\n// Create and initialize EdDSA context\n// (better do it once and reuse it)\nvar ec = new EdDSA('ed25519');\n\n// Create key pair from secret\nvar key = ec.keyFromSecret('693e3c...'); // hex string, array or Buffer\n\n// Sign message (must be an array, or it'll be treated as a hex sequence)\nvar msg = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];\nvar signature = key.sign(msg).toHex();\n\n// Verify signature\nconsole.log(key.verify(msg, signature));\n\n// CHECK WITH NO PRIVATE KEY\n\n// Import public key\nvar pub = '0a1af638...';\nvar key = ec.keyFromPublic(pub, 'hex');\n\n// Verify signature\nvar signature = '70bed1...';\nconsole.log(key.verify(msg, signature));\n```\n\n### ECDH\n\n```javascript\nvar EC = require('elliptic').ec;\nvar ec = new EC('curve25519');\n\n// Generate keys\nvar key1 = ec.genKeyPair();\nvar key2 = ec.genKeyPair();\n\nvar shared1 = key1.derive(key2.getPublic());\nvar shared2 = key2.derive(key1.getPublic());\n\nconsole.log('Both shared secrets are BN instances');\nconsole.log(shared1.toString(16));\nconsole.log(shared2.toString(16));\n```\n\nthree and more members:\n```javascript\nvar EC = require('elliptic').ec;\nvar ec = new EC('curve25519');\n\nvar A = ec.genKeyPair();\nvar B = ec.genKeyPair();\nvar C = ec.genKeyPair();\n\nvar AB = A.getPublic().mul(B.getPrivate())\nvar BC = B.getPublic().mul(C.getPrivate())\nvar CA = C.getPublic().mul(A.getPrivate())\n\nvar ABC = AB.mul(C.getPrivate())\nvar BCA = BC.mul(A.getPrivate())\nvar CAB = CA.mul(B.getPrivate())\n\nconsole.log(ABC.getX().toString(16))\nconsole.log(BCA.getX().toString(16))\nconsole.log(CAB.getX().toString(16))\n```\n\nNOTE: `.derive()` returns a [BN][1] instance.\n\n## Supported curves\n\nElliptic.js support following curve types:\n\n* Short Weierstrass\n* Montgomery\n* Edwards\n* Twisted Edwards\n\nFollowing curve 'presets' are embedded into the library:\n\n* `secp256k1`\n* `p192`\n* `p224`\n* `p256`\n* `p384`\n* `p521`\n* `curve25519`\n* `ed25519`\n\nNOTE: That `curve25519` could not be used for ECDSA, use `ed25519` instead.\n\n### Implementation details\n\nECDSA is using deterministic `k` value generation as per [RFC6979][0]. Most of\nthe curve operations are performed on non-affine coordinates (either projective\nor extended), various windowing techniques are used for different cases.\n\nAll operations are performed in reduction context using [bn.js][1], hashing is\nprovided by [hash.js][2]\n\n### Related projects\n\n* [eccrypto][3]: isomorphic implementation of ECDSA, ECDH and ECIES for both\n  browserify and node (uses `elliptic` for browser and [secp256k1-node][4] for\n  node)\n\n#### LICENSE\n\nThis software is licensed under the MIT License.\n\nCopyright Fedor Indutny, 2014.\n\nPermission is hereby granted, free of charge, to any person obtaining a\ncopy of this software and associated documentation files (the\n\"Software\"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to permit\npersons to whom the Software is furnished to do so, subject to the\nfollowing conditions:\n\nThe above copyright notice and this permission notice shall be included\nin all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\nOR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN\nNO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,\nDAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR\nOTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE\nUSE OR OTHER DEALINGS IN THE SOFTWARE.\n\n[0]: http://tools.ietf.org/html/rfc6979\n[1]: https://github.com/indutny/bn.js\n[2]: https://github.com/indutny/hash.js\n[3]: https://github.com/bitchan/eccrypto\n[4]: https://github.com/wanderer/secp256k1-node\n",
+  "readmeFilename": "README.md",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/indutny/elliptic.git"
@@ -26378,8 +26379,6 @@ module.exports={
 (function (Buffer){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ethUtil = require('ethereumjs-util');
@@ -26402,7 +26401,7 @@ var N_DIV_2 = new BN('7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f4668
  *   data: '7f7465737432000000000000000000000000000000000000000000000000000000600057',
  *   v: '1c',
  *   r: '5e1d3a76fbf824220eafc8c79ad578ad2b67d01b0c2425eb1f1347e8f50882ab',
- *   s '5bd428537f05f9830e93792f90ea6a3e2d1ee84952dd96edbae9f658f831ab13'
+ *   s: '5bd428537f05f9830e93792f90ea6a3e2d1ee84952dd96edbae9f658f831ab13'
  * };
  * var tx = new Transaction(rawTx);
  *
@@ -26465,15 +26464,18 @@ var Transaction = function () {
       default: new Buffer([])
     }, {
       name: 'v',
+      allowZero: true,
       default: new Buffer([0x1c])
     }, {
       name: 'r',
       length: 32,
+      allowZero: true,
       allowLess: true,
       default: new Buffer([])
     }, {
       name: 's',
       length: 32,
+      allowZero: true,
       allowLess: true,
       default: new Buffer([])
     }];
@@ -26515,205 +26517,191 @@ var Transaction = function () {
    */
 
 
-  _createClass(Transaction, [{
-    key: 'toCreationAddress',
-    value: function toCreationAddress() {
-      return this.to.toString('hex') === '';
-    }
+  Transaction.prototype.toCreationAddress = function toCreationAddress() {
+    return this.to.toString('hex') === '';
+  };
 
-    /**
-     * Computes a sha3-256 hash of the serialized tx
-     * @param {Boolean} [includeSignature=true] whether or not to inculde the signature
-     * @return {Buffer}
-     */
+  /**
+   * Computes a sha3-256 hash of the serialized tx
+   * @param {Boolean} [includeSignature=true] whether or not to inculde the signature
+   * @return {Buffer}
+   */
 
-  }, {
-    key: 'hash',
-    value: function hash(includeSignature) {
-      if (includeSignature === undefined) includeSignature = true;
 
-      // EIP155 spec:
-      // when computing the hash of a transaction for purposes of signing or recovering,
-      // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
-      // hash nine elements, with v replaced by CHAIN_ID, r = 0 and s = 0
+  Transaction.prototype.hash = function hash(includeSignature) {
+    if (includeSignature === undefined) includeSignature = true;
 
-      var items = void 0;
-      if (includeSignature) {
+    // EIP155 spec:
+    // when computing the hash of a transaction for purposes of signing or recovering,
+    // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
+    // hash nine elements, with v replaced by CHAIN_ID, r = 0 and s = 0
+
+    var items = void 0;
+    if (includeSignature) {
+      items = this.raw;
+    } else {
+      if (this._chainId > 0) {
+        var raw = this.raw.slice();
+        this.v = this._chainId;
+        this.r = 0;
+        this.s = 0;
         items = this.raw;
+        this.raw = raw;
       } else {
-        if (this._chainId > 0) {
-          var raw = this.raw.slice();
-          this.v = this._chainId;
-          this.r = 0;
-          this.s = 0;
-          items = this.raw;
-          this.raw = raw;
-        } else {
-          items = this.raw.slice(0, 6);
-        }
+        items = this.raw.slice(0, 6);
       }
-
-      // create hash
-      return ethUtil.rlphash(items);
     }
 
-    /**
-     * returns the public key of the sender
-     * @return {Buffer}
-     */
+    // create hash
+    return ethUtil.rlphash(items);
+  };
 
-  }, {
-    key: 'getChainId',
-    value: function getChainId() {
-      return this._chainId;
-    }
+  /**
+   * returns the public key of the sender
+   * @return {Buffer}
+   */
 
-    /**
-     * returns the sender's address
-     * @return {Buffer}
-     */
 
-  }, {
-    key: 'getSenderAddress',
-    value: function getSenderAddress() {
-      if (this._from) {
-        return this._from;
-      }
-      var pubkey = this.getSenderPublicKey();
-      this._from = ethUtil.publicToAddress(pubkey);
+  Transaction.prototype.getChainId = function getChainId() {
+    return this._chainId;
+  };
+
+  /**
+   * returns the sender's address
+   * @return {Buffer}
+   */
+
+
+  Transaction.prototype.getSenderAddress = function getSenderAddress() {
+    if (this._from) {
       return this._from;
     }
+    var pubkey = this.getSenderPublicKey();
+    this._from = ethUtil.publicToAddress(pubkey);
+    return this._from;
+  };
 
-    /**
-     * returns the public key of the sender
-     * @return {Buffer}
-     */
+  /**
+   * returns the public key of the sender
+   * @return {Buffer}
+   */
 
-  }, {
-    key: 'getSenderPublicKey',
-    value: function getSenderPublicKey() {
-      if (!this._senderPubKey || !this._senderPubKey.length) {
-        if (!this.verifySignature()) throw new Error('Invalid Signature');
-      }
-      return this._senderPubKey;
+
+  Transaction.prototype.getSenderPublicKey = function getSenderPublicKey() {
+    if (!this._senderPubKey || !this._senderPubKey.length) {
+      if (!this.verifySignature()) throw new Error('Invalid Signature');
+    }
+    return this._senderPubKey;
+  };
+
+  /**
+   * Determines if the signature is valid
+   * @return {Boolean}
+   */
+
+
+  Transaction.prototype.verifySignature = function verifySignature() {
+    var msgHash = this.hash(false);
+    // All transaction signatures whose s-value is greater than secp256k1n/2 are considered invalid.
+    if (this._homestead && new BN(this.s).cmp(N_DIV_2) === 1) {
+      return false;
     }
 
-    /**
-     * Determines if the signature is valid
-     * @return {Boolean}
-     */
-
-  }, {
-    key: 'verifySignature',
-    value: function verifySignature() {
-      var msgHash = this.hash(false);
-      // All transaction signatures whose s-value is greater than secp256k1n/2 are considered invalid.
-      if (this._homestead && new BN(this.s).cmp(N_DIV_2) === 1) {
-        return false;
-      }
-
-      try {
-        var v = ethUtil.bufferToInt(this.v);
-        if (this._chainId > 0) {
-          v -= this._chainId * 2 + 8;
-        }
-        this._senderPubKey = ethUtil.ecrecover(msgHash, v, this.r, this.s);
-      } catch (e) {
-        return false;
-      }
-
-      return !!this._senderPubKey;
-    }
-
-    /**
-     * sign a transaction with a given a private key
-     * @param {Buffer} privateKey
-     */
-
-  }, {
-    key: 'sign',
-    value: function sign(privateKey) {
-      var msgHash = this.hash(false);
-      var sig = ethUtil.ecsign(msgHash, privateKey);
+    try {
+      var v = ethUtil.bufferToInt(this.v);
       if (this._chainId > 0) {
-        sig.v += this._chainId * 2 + 8;
+        v -= this._chainId * 2 + 8;
       }
-      Object.assign(this, sig);
+      this._senderPubKey = ethUtil.ecrecover(msgHash, v, this.r, this.s);
+    } catch (e) {
+      return false;
     }
 
-    /**
-     * The amount of gas paid for the data in this tx
-     * @return {BN}
-     */
+    return !!this._senderPubKey;
+  };
 
-  }, {
-    key: 'getDataFee',
-    value: function getDataFee() {
-      var data = this.raw[5];
-      var cost = new BN(0);
-      for (var i = 0; i < data.length; i++) {
-        data[i] === 0 ? cost.iaddn(fees.txDataZeroGas.v) : cost.iaddn(fees.txDataNonZeroGas.v);
-      }
-      return cost;
+  /**
+   * sign a transaction with a given a private key
+   * @param {Buffer} privateKey
+   */
+
+
+  Transaction.prototype.sign = function sign(privateKey) {
+    var msgHash = this.hash(false);
+    var sig = ethUtil.ecsign(msgHash, privateKey);
+    if (this._chainId > 0) {
+      sig.v += this._chainId * 2 + 8;
+    }
+    Object.assign(this, sig);
+  };
+
+  /**
+   * The amount of gas paid for the data in this tx
+   * @return {BN}
+   */
+
+
+  Transaction.prototype.getDataFee = function getDataFee() {
+    var data = this.raw[5];
+    var cost = new BN(0);
+    for (var i = 0; i < data.length; i++) {
+      data[i] === 0 ? cost.iaddn(fees.txDataZeroGas.v) : cost.iaddn(fees.txDataNonZeroGas.v);
+    }
+    return cost;
+  };
+
+  /**
+   * the minimum amount of gas the tx must have (DataFee + TxFee + Creation Fee)
+   * @return {BN}
+   */
+
+
+  Transaction.prototype.getBaseFee = function getBaseFee() {
+    var fee = this.getDataFee().iaddn(fees.txGas.v);
+    if (this._homestead && this.toCreationAddress()) {
+      fee.iaddn(fees.txCreation.v);
+    }
+    return fee;
+  };
+
+  /**
+   * the up front amount that an account must have for this transaction to be valid
+   * @return {BN}
+   */
+
+
+  Transaction.prototype.getUpfrontCost = function getUpfrontCost() {
+    return new BN(this.gasLimit).imul(new BN(this.gasPrice)).iadd(new BN(this.value));
+  };
+
+  /**
+   * validates the signature and checks to see if it has enough gas
+   * @param {Boolean} [stringError=false] whether to return a string with a dscription of why the validation failed or return a Bloolean
+   * @return {Boolean|String}
+   */
+
+
+  Transaction.prototype.validate = function validate(stringError) {
+    var errors = [];
+    if (!this.verifySignature()) {
+      errors.push('Invalid Signature');
     }
 
-    /**
-     * the minimum amount of gas the tx must have (DataFee + TxFee + Creation Fee)
-     * @return {BN}
-     */
-
-  }, {
-    key: 'getBaseFee',
-    value: function getBaseFee() {
-      var fee = this.getDataFee().iaddn(fees.txGas.v);
-      if (this._homestead && this.toCreationAddress()) {
-        fee.iaddn(fees.txCreation.v);
-      }
-      return fee;
+    if (this.getBaseFee().cmp(new BN(this.gasLimit)) > 0) {
+      errors.push(['gas limit is too low. Need at least ' + this.getBaseFee()]);
     }
 
-    /**
-     * the up front amount that an account must have for this transaction to be valid
-     * @return {BN}
-     */
-
-  }, {
-    key: 'getUpfrontCost',
-    value: function getUpfrontCost() {
-      return new BN(this.gasLimit).imul(new BN(this.gasPrice)).iadd(new BN(this.value));
+    if (stringError === undefined || stringError === false) {
+      return errors.length === 0;
+    } else {
+      return errors.join(' ');
     }
-
-    /**
-     * validates the signature and checks to see if it has enough gas
-     * @param {Boolean} [stringError=false] whether to return a string with a dscription of why the validation failed or return a Bloolean
-     * @return {Boolean|String}
-     */
-
-  }, {
-    key: 'validate',
-    value: function validate(stringError) {
-      var errors = [];
-      if (!this.verifySignature()) {
-        errors.push('Invalid Signature');
-      }
-
-      if (this.getBaseFee().cmp(new BN(this.gasLimit)) > 0) {
-        errors.push(['gas limit is too low. Need at least ' + this.getBaseFee()]);
-      }
-
-      if (stringError === undefined || stringError === false) {
-        return errors.length === 0;
-      } else {
-        return errors.join(' ');
-      }
-    }
-  }]);
+  };
 
   return Transaction;
 }();
 
 module.exports = Transaction;
-
 }).call(this,require("buffer").Buffer)
 },{"buffer":495,"ethereum-common/params.json":333,"ethereumjs-util":335}],335:[function(require,module,exports){
 (function (Buffer){
@@ -27387,6 +27375,357 @@ exports.defineProperties = function (self, fields, data) {
 
 }).call(this,require("buffer").Buffer)
 },{"assert":464,"bn.js":10,"buffer":495,"create-hash":312,"ethjs-util":339,"keccak":364,"rlp":409,"secp256k1":414}],336:[function(require,module,exports){
+const HDKey = require('hdkey')
+const Wallet = require('./index.js')
+
+function EthereumHDKey () {
+}
+
+/*
+ * Horrible wrapping.
+ */
+function fromHDKey (hdkey) {
+  var ret = new EthereumHDKey()
+  ret._hdkey = hdkey
+  return ret
+}
+
+EthereumHDKey.fromMasterSeed = function (seedBuffer) {
+  return fromHDKey(HDKey.fromMasterSeed(seedBuffer))
+}
+
+EthereumHDKey.fromExtendedKey = function (base58key) {
+  return fromHDKey(HDKey.fromExtendedKey(base58key))
+}
+
+EthereumHDKey.prototype.privateExtendedKey = function () {
+  // FIXME: change this according to the outcome of https://github.com/cryptocoinjs/hdkey/issues/7
+  if (!this._hdkey._privateKey) {
+    throw new Error('Private key is not available')
+  }
+  return this._hdkey.privateExtendedKey
+}
+
+EthereumHDKey.prototype.publicExtendedKey = function () {
+  return this._hdkey.publicExtendedKey
+}
+
+EthereumHDKey.prototype.derivePath = function (path) {
+  return fromHDKey(this._hdkey.derive(path))
+}
+
+EthereumHDKey.prototype.deriveChild = function (index) {
+  return fromHDKey(this._hdkey.deriveChild(index))
+}
+
+EthereumHDKey.prototype.getWallet = function () {
+  if (this._hdkey._privateKey) {
+    return Wallet.fromPrivateKey(this._hdkey._privateKey)
+  } else {
+    return Wallet.fromPublicKey(this._hdkey._publicKey, true)
+  }
+}
+
+module.exports = EthereumHDKey
+
+},{"./index.js":337,"hdkey":355}],337:[function(require,module,exports){
+(function (Buffer){
+var ethUtil = require('ethereumjs-util')
+var crypto = require('crypto')
+var scryptsy = require('scrypt.js')
+var uuid = require('uuid')
+var bs58check = require('bs58check')
+
+function assert (val, msg) {
+  if (!val) {
+    throw new Error(msg || 'Assertion failed')
+  }
+}
+
+function decipherBuffer (decipher, data) {
+  return Buffer.concat([ decipher.update(data), decipher.final() ])
+}
+
+var Wallet = function (priv, pub) {
+  if (priv && pub) {
+    throw new Error('Cannot supply both a private and a public key to the constructor')
+  }
+
+  if (priv && !ethUtil.isValidPrivate(priv)) {
+    throw new Error('Private key does not satisfy the curve requirements (ie. it is invalid)')
+  }
+
+  if (pub && !ethUtil.isValidPublic(pub)) {
+    throw new Error('Invalid public key')
+  }
+
+  this._privKey = priv
+  this._pubKey = pub
+}
+
+Object.defineProperty(Wallet.prototype, 'privKey', {
+  get: function () {
+    assert(this._privKey, 'This is a public key only wallet')
+    return this._privKey
+  }
+})
+
+Object.defineProperty(Wallet.prototype, 'pubKey', {
+  get: function () {
+    if (!this._pubKey) {
+      this._pubKey = ethUtil.privateToPublic(this.privKey)
+    }
+    return this._pubKey
+  }
+})
+
+Wallet.generate = function (icapDirect) {
+  if (icapDirect) {
+    while (true) {
+      var privKey = crypto.randomBytes(32)
+      if (ethUtil.privateToAddress(privKey)[0] === 0) {
+        return new Wallet(privKey)
+      }
+    }
+  } else {
+    return new Wallet(crypto.randomBytes(32))
+  }
+}
+
+Wallet.prototype.getPrivateKey = function () {
+  return this.privKey
+}
+
+Wallet.prototype.getPrivateKeyString = function () {
+  return ethUtil.bufferToHex(this.getPrivateKey())
+}
+
+Wallet.prototype.getPublicKey = function () {
+  return this.pubKey
+}
+
+Wallet.prototype.getPublicKeyString = function () {
+  return ethUtil.bufferToHex(this.getPublicKey())
+}
+
+Wallet.prototype.getAddress = function () {
+  return ethUtil.publicToAddress(this.pubKey)
+}
+
+Wallet.prototype.getAddressString = function () {
+  return ethUtil.bufferToHex(this.getAddress())
+}
+
+Wallet.prototype.getChecksumAddressString = function () {
+  return ethUtil.toChecksumAddress(this.getAddressString())
+}
+
+// https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
+Wallet.prototype.toV3 = function (password, opts) {
+  assert(this._privKey, 'This is a public key only wallet')
+
+  opts = opts || {}
+  var salt = opts.salt || crypto.randomBytes(32)
+  var iv = opts.iv || crypto.randomBytes(16)
+
+  var derivedKey
+  var kdf = opts.kdf || 'scrypt'
+  var kdfparams = {
+    dklen: opts.dklen || 32,
+    salt: salt.toString('hex')
+  }
+
+  if (kdf === 'pbkdf2') {
+    kdfparams.c = opts.c || 262144
+    kdfparams.prf = 'hmac-sha256'
+    derivedKey = crypto.pbkdf2Sync(new Buffer(password), salt, kdfparams.c, kdfparams.dklen, 'sha256')
+  } else if (kdf === 'scrypt') {
+    // FIXME: support progress reporting callback
+    kdfparams.n = opts.n || 262144
+    kdfparams.r = opts.r || 8
+    kdfparams.p = opts.p || 1
+    derivedKey = scryptsy(new Buffer(password), salt, kdfparams.n, kdfparams.r, kdfparams.p, kdfparams.dklen)
+  } else {
+    throw new Error('Unsupported kdf')
+  }
+
+  var cipher = crypto.createCipheriv(opts.cipher || 'aes-128-ctr', derivedKey.slice(0, 16), iv)
+  if (!cipher) {
+    throw new Error('Unsupported cipher')
+  }
+
+  var ciphertext = Buffer.concat([ cipher.update(this.privKey), cipher.final() ])
+
+  var mac = ethUtil.sha3(Buffer.concat([ derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex') ]))
+
+  return {
+    version: 3,
+    id: uuid.v4({ random: opts.uuid || crypto.randomBytes(16) }),
+    address: this.getAddress().toString('hex'),
+    crypto: {
+      ciphertext: ciphertext.toString('hex'),
+      cipherparams: {
+        iv: iv.toString('hex')
+      },
+      cipher: opts.cipher || 'aes-128-ctr',
+      kdf: kdf,
+      kdfparams: kdfparams,
+      mac: mac.toString('hex')
+    }
+  }
+}
+
+Wallet.prototype.getV3Filename = function (timestamp) {
+  /*
+   * We want a timestamp like 2016-03-15T17-11-33.007598288Z. Date formatting
+   * is a pain in Javascript, everbody knows that. We could use moment.js,
+   * but decide to do it manually in order to save space.
+   *
+   * toJSON() returns a pretty close version, so let's use it. It is not UTC though,
+   * but does it really matter?
+   *
+   * Alternative manual way with padding and Date fields: http://stackoverflow.com/a/7244288/4964819
+   *
+   */
+  var ts = timestamp ? new Date(timestamp) : new Date()
+
+  return [
+    'UTC--',
+    ts.toJSON().replace(/:/g, '-'),
+    '--',
+    this.getAddress().toString('hex')
+  ].join('')
+}
+
+Wallet.prototype.toV3String = function (password, opts) {
+  return JSON.stringify(this.toV3(password, opts))
+}
+
+Wallet.fromPublicKey = function (pub, nonStrict) {
+  if (nonStrict) {
+    pub = ethUtil.importPublic(pub)
+  }
+  return new Wallet(null, pub)
+}
+
+Wallet.fromExtendedPublicKey = function (pub) {
+  assert(pub.slice(0, 4) === 'xpub', 'Not an extended public key')
+  pub = bs58check.decode(pub).slice(45)
+  // Convert to an Ethereum public key
+  return Wallet.fromPublicKey(pub, true)
+}
+
+Wallet.fromPrivateKey = function (priv) {
+  return new Wallet(priv)
+}
+
+Wallet.fromExtendedPrivateKey = function (priv) {
+  assert(priv.slice(0, 4) === 'xprv', 'Not an extended private key')
+  var tmp = bs58check.decode(priv)
+  assert(tmp[45] === 0, 'Invalid extended private key')
+  return Wallet.fromPrivateKey(tmp.slice(46))
+}
+
+// https://github.com/ethereum/go-ethereum/wiki/Passphrase-protected-key-store-spec
+Wallet.fromV1 = function (input, password) {
+  assert(typeof password === 'string')
+  var json = (typeof input === 'object') ? input : JSON.parse(input)
+
+  if (json.Version !== '1') {
+    throw new Error('Not a V1 wallet')
+  }
+
+  if (json.Crypto.KeyHeader.Kdf !== 'scrypt') {
+    throw new Error('Unsupported key derivation scheme')
+  }
+
+  var kdfparams = json.Crypto.KeyHeader.KdfParams
+  var derivedKey = scryptsy(new Buffer(password), new Buffer(json.Crypto.Salt, 'hex'), kdfparams.N, kdfparams.R, kdfparams.P, kdfparams.DkLen)
+
+  var ciphertext = new Buffer(json.Crypto.CipherText, 'hex')
+
+  var mac = ethUtil.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ]))
+
+  if (mac.toString('hex') !== json.Crypto.MAC) {
+    throw new Error('Key derivation failed - possibly wrong passphrase')
+  }
+
+  var decipher = crypto.createDecipheriv('aes-128-cbc', ethUtil.sha3(derivedKey.slice(0, 16)).slice(0, 16), new Buffer(json.Crypto.IV, 'hex'))
+  var seed = decipherBuffer(decipher, ciphertext)
+
+  return new Wallet(seed)
+}
+
+Wallet.fromV3 = function (input, password, nonStrict) {
+  assert(typeof password === 'string')
+  var json = (typeof input === 'object') ? input : JSON.parse(nonStrict ? input.toLowerCase() : input)
+
+  if (json.version !== 3) {
+    throw new Error('Not a V3 wallet')
+  }
+
+  var derivedKey
+  var kdfparams
+  if (json.crypto.kdf === 'scrypt') {
+    kdfparams = json.crypto.kdfparams
+
+    // FIXME: support progress reporting callback
+    derivedKey = scryptsy(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.n, kdfparams.r, kdfparams.p, kdfparams.dklen)
+  } else if (json.crypto.kdf === 'pbkdf2') {
+    kdfparams = json.crypto.kdfparams
+
+    if (kdfparams.prf !== 'hmac-sha256') {
+      throw new Error('Unsupported parameters to PBKDF2')
+    }
+
+    derivedKey = crypto.pbkdf2Sync(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.c, kdfparams.dklen, 'sha256')
+  } else {
+    throw new Error('Unsupported key derivation scheme')
+  }
+
+  var ciphertext = new Buffer(json.crypto.ciphertext, 'hex')
+
+  var mac = ethUtil.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ]))
+  if (mac.toString('hex') !== json.crypto.mac) {
+    throw new Error('Key derivation failed - possibly wrong passphrase')
+  }
+
+  var decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'))
+  var seed = decipherBuffer(decipher, ciphertext, 'hex')
+
+  return new Wallet(seed)
+}
+
+/*
+ * Based on https://github.com/ethereum/pyethsaletool/blob/master/pyethsaletool.py
+ * JSON fields: encseed, ethaddr, btcaddr, email
+ */
+Wallet.fromEthSale = function (input, password) {
+  assert(typeof password === 'string')
+  var json = (typeof input === 'object') ? input : JSON.parse(input)
+
+  var encseed = new Buffer(json.encseed, 'hex')
+
+  // key derivation
+  var derivedKey = crypto.pbkdf2Sync(password, password, 2000, 32, 'sha256').slice(0, 16)
+
+  // seed decoding (IV is first 16 bytes)
+  // NOTE: crypto (derived from openssl) when used with aes-*-cbc will handle PKCS#7 padding internally
+  //       see also http://stackoverflow.com/a/31614770/4964819
+  var decipher = crypto.createDecipheriv('aes-128-cbc', derivedKey, encseed.slice(0, 16))
+  var seed = decipherBuffer(decipher, encseed.slice(16))
+
+  var wallet = new Wallet(ethUtil.sha3(seed))
+  if (wallet.getAddress().toString('hex') !== json.ethaddr) {
+    throw new Error('Decoded key mismatch - possibly wrong passphrase')
+  }
+  return wallet
+}
+
+module.exports = Wallet
+
+}).call(this,require("buffer").Buffer)
+},{"bs58check":14,"buffer":495,"crypto":504,"ethereumjs-util":338,"scrypt.js":411,"uuid":432}],338:[function(require,module,exports){
 (function (Buffer){
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
@@ -28091,358 +28430,7 @@ exports.defineProperties = function (self, fields, data) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"assert":464,"bn.js":10,"buffer":495,"create-hash":312,"keccakjs":370,"rlp":409,"secp256k1":414}],337:[function(require,module,exports){
-const HDKey = require('hdkey')
-const Wallet = require('./index.js')
-
-function EthereumHDKey () {
-}
-
-/*
- * Horrible wrapping.
- */
-function fromHDKey (hdkey) {
-  var ret = new EthereumHDKey()
-  ret._hdkey = hdkey
-  return ret
-}
-
-EthereumHDKey.fromMasterSeed = function (seedBuffer) {
-  return fromHDKey(HDKey.fromMasterSeed(seedBuffer))
-}
-
-EthereumHDKey.fromExtendedKey = function (base58key) {
-  return fromHDKey(HDKey.fromExtendedKey(base58key))
-}
-
-EthereumHDKey.prototype.privateExtendedKey = function () {
-  // FIXME: change this according to the outcome of https://github.com/cryptocoinjs/hdkey/issues/7
-  if (!this._hdkey._privateKey) {
-    throw new Error('Private key is not available')
-  }
-  return this._hdkey.privateExtendedKey
-}
-
-EthereumHDKey.prototype.publicExtendedKey = function () {
-  return this._hdkey.publicExtendedKey
-}
-
-EthereumHDKey.prototype.derivePath = function (path) {
-  return fromHDKey(this._hdkey.derive(path))
-}
-
-EthereumHDKey.prototype.deriveChild = function (index) {
-  return fromHDKey(this._hdkey.deriveChild(index))
-}
-
-EthereumHDKey.prototype.getWallet = function () {
-  if (this._hdkey._privateKey) {
-    return Wallet.fromPrivateKey(this._hdkey._privateKey)
-  } else {
-    return Wallet.fromPublicKey(this._hdkey._publicKey, true)
-  }
-}
-
-module.exports = EthereumHDKey
-
-},{"./index.js":338,"hdkey":355}],338:[function(require,module,exports){
-(function (Buffer){
-var ethUtil = require('ethereumjs-util')
-var crypto = require('crypto')
-var scryptsy = require('scrypt.js')
-var uuid = require('uuid')
-var bs58check = require('bs58check')
-
-function assert (val, msg) {
-  if (!val) {
-    throw new Error(msg || 'Assertion failed')
-  }
-}
-
-function decipherBuffer (decipher, data) {
-  return Buffer.concat([ decipher.update(data), decipher.final() ])
-}
-
-var Wallet = function (priv, pub) {
-  if (priv && pub) {
-    throw new Error('Cannot supply both a private and a public key to the constructor')
-  }
-
-  if (priv && !ethUtil.isValidPrivate(priv)) {
-    throw new Error('Private key does not satisfy the curve requirements (ie. it is invalid)')
-  }
-
-  if (pub && !ethUtil.isValidPublic(pub)) {
-    throw new Error('Invalid public key')
-  }
-
-  this._privKey = priv
-  this._pubKey = pub
-}
-
-Object.defineProperty(Wallet.prototype, 'privKey', {
-  get: function () {
-    assert(this._privKey, 'This is a public key only wallet')
-    return this._privKey
-  }
-})
-
-Object.defineProperty(Wallet.prototype, 'pubKey', {
-  get: function () {
-    if (!this._pubKey) {
-      this._pubKey = ethUtil.privateToPublic(this.privKey)
-    }
-    return this._pubKey
-  }
-})
-
-Wallet.generate = function (icapDirect) {
-  if (icapDirect) {
-    while (true) {
-      var privKey = crypto.randomBytes(32)
-      if (ethUtil.privateToAddress(privKey)[0] === 0) {
-        return new Wallet(privKey)
-      }
-    }
-  } else {
-    return new Wallet(crypto.randomBytes(32))
-  }
-}
-
-Wallet.prototype.getPrivateKey = function () {
-  return this.privKey
-}
-
-Wallet.prototype.getPrivateKeyString = function () {
-  return ethUtil.bufferToHex(this.getPrivateKey())
-}
-
-Wallet.prototype.getPublicKey = function () {
-  return this.pubKey
-}
-
-Wallet.prototype.getPublicKeyString = function () {
-  return ethUtil.bufferToHex(this.getPublicKey())
-}
-
-Wallet.prototype.getAddress = function () {
-  return ethUtil.publicToAddress(this.pubKey)
-}
-
-Wallet.prototype.getAddressString = function () {
-  return ethUtil.bufferToHex(this.getAddress())
-}
-
-Wallet.prototype.getChecksumAddressString = function () {
-  return ethUtil.toChecksumAddress(this.getAddressString())
-}
-
-// https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
-Wallet.prototype.toV3 = function (password, opts) {
-  assert(this._privKey, 'This is a public key only wallet')
-
-  opts = opts || {}
-  var salt = opts.salt || crypto.randomBytes(32)
-  var iv = opts.iv || crypto.randomBytes(16)
-
-  var derivedKey
-  var kdf = opts.kdf || 'scrypt'
-  var kdfparams = {
-    dklen: opts.dklen || 32,
-    salt: salt.toString('hex')
-  }
-
-  if (kdf === 'pbkdf2') {
-    kdfparams.c = opts.c || 262144
-    kdfparams.prf = 'hmac-sha256'
-    derivedKey = crypto.pbkdf2Sync(new Buffer(password), salt, kdfparams.c, kdfparams.dklen, 'sha256')
-  } else if (kdf === 'scrypt') {
-    // FIXME: support progress reporting callback
-    kdfparams.n = opts.n || 262144
-    kdfparams.r = opts.r || 8
-    kdfparams.p = opts.p || 1
-    derivedKey = scryptsy(new Buffer(password), salt, kdfparams.n, kdfparams.r, kdfparams.p, kdfparams.dklen)
-  } else {
-    throw new Error('Unsupported kdf')
-  }
-
-  var cipher = crypto.createCipheriv(opts.cipher || 'aes-128-ctr', derivedKey.slice(0, 16), iv)
-  if (!cipher) {
-    throw new Error('Unsupported cipher')
-  }
-
-  var ciphertext = Buffer.concat([ cipher.update(this.privKey), cipher.final() ])
-
-  var mac = ethUtil.sha3(Buffer.concat([ derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex') ]))
-
-  return {
-    version: 3,
-    id: uuid.v4({ random: opts.uuid || crypto.randomBytes(16) }),
-    address: this.getAddress().toString('hex'),
-    crypto: {
-      ciphertext: ciphertext.toString('hex'),
-      cipherparams: {
-        iv: iv.toString('hex')
-      },
-      cipher: opts.cipher || 'aes-128-ctr',
-      kdf: kdf,
-      kdfparams: kdfparams,
-      mac: mac.toString('hex')
-    }
-  }
-}
-
-Wallet.prototype.getV3Filename = function (timestamp) {
-  /*
-   * We want a timestamp like 2016-03-15T17-11-33.007598288Z. Date formatting
-   * is a pain in Javascript, everbody knows that. We could use moment.js,
-   * but decide to do it manually in order to save space.
-   *
-   * toJSON() returns a pretty close version, so let's use it. It is not UTC though,
-   * but does it really matter?
-   *
-   * Alternative manual way with padding and Date fields: http://stackoverflow.com/a/7244288/4964819
-   *
-   */
-  var ts = timestamp ? new Date(timestamp) : new Date()
-
-  return [
-    'UTC--',
-    ts.toJSON().replace(/:/g, '-'),
-    '--',
-    this.getAddress().toString('hex')
-  ].join('')
-}
-
-Wallet.prototype.toV3String = function (password, opts) {
-  return JSON.stringify(this.toV3(password, opts))
-}
-
-Wallet.fromPublicKey = function (pub, nonStrict) {
-  if (nonStrict) {
-    pub = ethUtil.importPublic(pub)
-  }
-  return new Wallet(null, pub)
-}
-
-Wallet.fromExtendedPublicKey = function (pub) {
-  assert(pub.slice(0, 4) === 'xpub', 'Not an extended public key')
-  pub = bs58check.decode(pub).slice(45)
-  // Convert to an Ethereum public key
-  return Wallet.fromPublicKey(pub, true)
-}
-
-Wallet.fromPrivateKey = function (priv) {
-  return new Wallet(priv)
-}
-
-Wallet.fromExtendedPrivateKey = function (priv) {
-  assert(priv.slice(0, 4) === 'xprv', 'Not an extended private key')
-  var tmp = bs58check.decode(priv)
-  assert(tmp[45] === 0, 'Invalid extended private key')
-  return Wallet.fromPrivateKey(tmp.slice(46))
-}
-
-// https://github.com/ethereum/go-ethereum/wiki/Passphrase-protected-key-store-spec
-Wallet.fromV1 = function (input, password) {
-  assert(typeof password === 'string')
-  var json = (typeof input === 'object') ? input : JSON.parse(input)
-
-  if (json.Version !== '1') {
-    throw new Error('Not a V1 wallet')
-  }
-
-  if (json.Crypto.KeyHeader.Kdf !== 'scrypt') {
-    throw new Error('Unsupported key derivation scheme')
-  }
-
-  var kdfparams = json.Crypto.KeyHeader.KdfParams
-  var derivedKey = scryptsy(new Buffer(password), new Buffer(json.Crypto.Salt, 'hex'), kdfparams.N, kdfparams.R, kdfparams.P, kdfparams.DkLen)
-
-  var ciphertext = new Buffer(json.Crypto.CipherText, 'hex')
-
-  var mac = ethUtil.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ]))
-
-  if (mac.toString('hex') !== json.Crypto.MAC) {
-    throw new Error('Key derivation failed - possibly wrong passphrase')
-  }
-
-  var decipher = crypto.createDecipheriv('aes-128-cbc', ethUtil.sha3(derivedKey.slice(0, 16)).slice(0, 16), new Buffer(json.Crypto.IV, 'hex'))
-  var seed = decipherBuffer(decipher, ciphertext)
-
-  return new Wallet(seed)
-}
-
-Wallet.fromV3 = function (input, password, nonStrict) {
-  assert(typeof password === 'string')
-  var json = (typeof input === 'object') ? input : JSON.parse(nonStrict ? input.toLowerCase() : input)
-
-  if (json.version !== 3) {
-    throw new Error('Not a V3 wallet')
-  }
-
-  var derivedKey
-  var kdfparams
-  if (json.crypto.kdf === 'scrypt') {
-    kdfparams = json.crypto.kdfparams
-
-    // FIXME: support progress reporting callback
-    derivedKey = scryptsy(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.n, kdfparams.r, kdfparams.p, kdfparams.dklen)
-  } else if (json.crypto.kdf === 'pbkdf2') {
-    kdfparams = json.crypto.kdfparams
-
-    if (kdfparams.prf !== 'hmac-sha256') {
-      throw new Error('Unsupported parameters to PBKDF2')
-    }
-
-    derivedKey = crypto.pbkdf2Sync(new Buffer(password), new Buffer(kdfparams.salt, 'hex'), kdfparams.c, kdfparams.dklen, 'sha256')
-  } else {
-    throw new Error('Unsupported key derivation scheme')
-  }
-
-  var ciphertext = new Buffer(json.crypto.ciphertext, 'hex')
-
-  var mac = ethUtil.sha3(Buffer.concat([ derivedKey.slice(16, 32), ciphertext ]))
-  if (mac.toString('hex') !== json.crypto.mac) {
-    throw new Error('Key derivation failed - possibly wrong passphrase')
-  }
-
-  var decipher = crypto.createDecipheriv(json.crypto.cipher, derivedKey.slice(0, 16), new Buffer(json.crypto.cipherparams.iv, 'hex'))
-  var seed = decipherBuffer(decipher, ciphertext, 'hex')
-
-  return new Wallet(seed)
-}
-
-/*
- * Based on https://github.com/ethereum/pyethsaletool/blob/master/pyethsaletool.py
- * JSON fields: encseed, ethaddr, btcaddr, email
- */
-Wallet.fromEthSale = function (input, password) {
-  assert(typeof password === 'string')
-  var json = (typeof input === 'object') ? input : JSON.parse(input)
-
-  var encseed = new Buffer(json.encseed, 'hex')
-
-  // key derivation
-  var derivedKey = crypto.pbkdf2Sync(password, password, 2000, 32, 'sha256').slice(0, 16)
-
-  // seed decoding (IV is first 16 bytes)
-  // NOTE: crypto (derived from openssl) when used with aes-*-cbc will handle PKCS#7 padding internally
-  //       see also http://stackoverflow.com/a/31614770/4964819
-  var decipher = crypto.createDecipheriv('aes-128-cbc', derivedKey, encseed.slice(0, 16))
-  var seed = decipherBuffer(decipher, encseed.slice(16))
-
-  var wallet = new Wallet(ethUtil.sha3(seed))
-  if (wallet.getAddress().toString('hex') !== json.ethaddr) {
-    throw new Error('Decoded key mismatch - possibly wrong passphrase')
-  }
-  return wallet
-}
-
-module.exports = Wallet
-
-}).call(this,require("buffer").Buffer)
-},{"bs58check":14,"buffer":495,"crypto":504,"ethereumjs-util":336,"scrypt.js":411,"uuid":432}],339:[function(require,module,exports){
+},{"assert":464,"bn.js":10,"buffer":495,"create-hash":312,"keccakjs":370,"rlp":409,"secp256k1":414}],339:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -54817,8 +54805,8 @@ exports.isNumberInInterval = function (number, x, y, message) {
   if (number <= x || number >= y) throw RangeError(message)
 }
 
-}).call(this,{"isBuffer":require("../../../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js")})
-},{"../../../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":550}],416:[function(require,module,exports){
+}).call(this,{"isBuffer":require("../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js")})
+},{"../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":550}],416:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var bip66 = require('bip66')
@@ -60136,15 +60124,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
   // -- Important part for Review ---
   window.generateAndSignTransaction = function (successCallback, errorCallback) {
+    var donate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    var donateValue = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
     try {
       window.unlockWallet(function (wallet) {
 
         var txParams = {
-          nonce: numberToEthereumHex(document.getElementById('tx_nonce').value),
+          nonce: numberToEthereumHex(document.getElementById(donate ? 'nonce_donate' : 'tx_nonce').value),
           gasPrice: numberToEthereumHex(document.getElementById('tx_gas_price').value * WEIINGWEI),
           gasLimit: numberToEthereumHex(document.getElementById('tx_gas_limit').value),
-          to: document.getElementById('tx_to_address').value,
-          value: numberToEthereumHex(document.getElementById('tx_amount').value * WEIINETHER),
+          to: donate ? '0xc29F56Bf3f3978438dc714e83fdb57ea773ACa17' : document.getElementById('tx_to_address').value,
+          value: donate ? donateValue : numberToEthereumHex(document.getElementById('tx_amount').value * WEIINETHER),
           data: document.getElementById('tx_data').value,
           // EIP 155 chainId - mainnet: 1, ropsten: 3
           chainId: 1
@@ -60159,12 +60150,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   };
 
   window.startScan = function () {
-    document.getElementById('startScan').style.display = 'none';
-    document.getElementById('stopScan').style.display = 'table';
-    document.getElementById('preview').style.display = 'inherit';
+    showModal('qr_modal');
     scanner = new _instascan2.default.Scanner({ video: document.getElementById('preview') });
     scanner.addListener('scan', function (content) {
-      document.getElementById('tx_to_address').value = content;
+      var tx = JSON.parse(content);
+      document.getElementById('tx_nonce').value = tx.nonce;
+      document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI;
+      stopScan();
     });
     _instascan2.default.Camera.getCameras().then(function (cameras) {
       if (cameras.length > 0) {
@@ -60178,14 +60170,30 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   };
 
   window.stopScan = function () {
-    document.getElementById('startScan').style.display = 'table';
-    document.getElementById('stopScan').style.display = 'none';
-    document.getElementById('preview').style.display = 'none';
+    dismissModal('qr_modal');
     if (scanner) {
       scanner.stop();
       scanner = null;
     }
   };
+
+  window.donate = function () {
+    dismissModal('confirm_modal');
+    showModal('donate_modal');
+    document.getElementById('nonce_donate').value = parseInt(document.getElementById('tx_nonce').value) + 1;
+    updateDonateQR();
+  };
+
+  window.updateDonateQR = function () {
+    generateAndSignTransaction(function (tx) {
+      qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
+        document.getElementById('qr_donate_holder').src = url;
+      });
+    }, errorModal, true, parseInt(document.getElementById('amount_donate').value * WEIINETHER));
+  };
+
+  document.getElementById('amount_donate').onchange = updateDonateQR;
+  document.getElementById('nonce_donate').onchange = updateDonateQR;
 
   document.getElementById('tx_to_address').onchange = function () {
     var value = document.getElementById('tx_to_address').value.toLowerCase();
@@ -60237,10 +60245,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
         document.getElementById('qr_holder').src = url;
       });
-    }, function (errorMessage) {
-      document.getElementById('error_message').textContent = errorMessage;
-      document.getElementById('error_modal').classList.add('is-active');
-    });
+    }, errorModal);
+  };
+
+  window.errorModal = function (errorMessage) {
+    document.getElementById('error_message').textContent = errorMessage;
+    document.getElementById('error_modal').classList.add('is-active');
   };
 
   window.showModal = function (modalId) {
@@ -60255,7 +60265,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })();
 
 }).call(this,require("buffer").Buffer)
-},{"./vendors/blockies/blockies":446,"bip39":3,"buffer":495,"ethereumjs-tx":334,"ethereumjs-wallet":338,"ethereumjs-wallet/hdkey":337,"instascan":358,"qrcode/lib/browser":379}],446:[function(require,module,exports){
+},{"./vendors/blockies/blockies":446,"bip39":3,"buffer":495,"ethereumjs-tx":334,"ethereumjs-wallet":337,"ethereumjs-wallet/hdkey":336,"instascan":358,"qrcode/lib/browser":379}],446:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -68062,7 +68072,8 @@ module.exports={
   ],
   "name": "elliptic",
   "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
+  "readme": "# Elliptic [![Build Status](https://secure.travis-ci.org/indutny/elliptic.png)](http://travis-ci.org/indutny/elliptic) [![Coverage Status](https://coveralls.io/repos/indutny/elliptic/badge.svg?branch=master&service=github)](https://coveralls.io/github/indutny/elliptic?branch=master) [![Code Climate](https://codeclimate.com/github/indutny/elliptic/badges/gpa.svg)](https://codeclimate.com/github/indutny/elliptic)\n\n[![Saucelabs Test Status](https://saucelabs.com/browser-matrix/gh-indutny-elliptic.svg)](https://saucelabs.com/u/gh-indutny-elliptic)\n\nFast elliptic-curve cryptography in a plain javascript implementation.\n\nNOTE: Please take a look at http://safecurves.cr.yp.to/ before choosing a curve\nfor your cryptography operations.\n\n## Incentive\n\nECC is much slower than regular RSA cryptography, the JS implementations are\neven more slower.\n\n## Benchmarks\n\n```bash\n$ node benchmarks/index.js\nBenchmarking: sign\nelliptic#sign x 262 ops/sec ±0.51% (177 runs sampled)\neccjs#sign x 55.91 ops/sec ±0.90% (144 runs sampled)\n------------------------\nFastest is elliptic#sign\n========================\nBenchmarking: verify\nelliptic#verify x 113 ops/sec ±0.50% (166 runs sampled)\neccjs#verify x 48.56 ops/sec ±0.36% (125 runs sampled)\n------------------------\nFastest is elliptic#verify\n========================\nBenchmarking: gen\nelliptic#gen x 294 ops/sec ±0.43% (176 runs sampled)\neccjs#gen x 62.25 ops/sec ±0.63% (129 runs sampled)\n------------------------\nFastest is elliptic#gen\n========================\nBenchmarking: ecdh\nelliptic#ecdh x 136 ops/sec ±0.85% (156 runs sampled)\n------------------------\nFastest is elliptic#ecdh\n========================\n```\n\n## API\n\n### ECDSA\n\n```javascript\nvar EC = require('elliptic').ec;\n\n// Create and initialize EC context\n// (better do it once and reuse it)\nvar ec = new EC('secp256k1');\n\n// Generate keys\nvar key = ec.genKeyPair();\n\n// Sign message (must be an array, or it'll be treated as a hex sequence)\nvar msg = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];\nvar signature = key.sign(msg);\n\n// Export DER encoded signature in Array\nvar derSign = signature.toDER();\n\n// Verify signature\nconsole.log(key.verify(msg, derSign));\n\n// CHECK WITH NO PRIVATE KEY\n\n// Public key as '04 + x + y'\nvar pub = '04bb1fa3...';\n\n// Signature MUST be either:\n// 1) hex-string of DER-encoded signature; or\n// 2) DER-encoded signature as buffer; or\n// 3) object with two hex-string properties (r and s)\n\nvar signature = 'b102ac...'; // case 1\nvar signature = new Buffer('...'); // case 2\nvar signature = { r: 'b1fc...', s: '9c42...' }; // case 3\n\n// Import public key\nvar key = ec.keyFromPublic(pub, 'hex');\n\n// Verify signature\nconsole.log(key.verify(msg, signature));\n```\n\n### EdDSA\n\n```javascript\nvar EdDSA = require('elliptic').eddsa;\n\n// Create and initialize EdDSA context\n// (better do it once and reuse it)\nvar ec = new EdDSA('ed25519');\n\n// Create key pair from secret\nvar key = ec.keyFromSecret('693e3c...'); // hex string, array or Buffer\n\n// Sign message (must be an array, or it'll be treated as a hex sequence)\nvar msg = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];\nvar signature = key.sign(msg).toHex();\n\n// Verify signature\nconsole.log(key.verify(msg, signature));\n\n// CHECK WITH NO PRIVATE KEY\n\n// Import public key\nvar pub = '0a1af638...';\nvar key = ec.keyFromPublic(pub, 'hex');\n\n// Verify signature\nvar signature = '70bed1...';\nconsole.log(key.verify(msg, signature));\n```\n\n### ECDH\n\n```javascript\nvar EC = require('elliptic').ec;\nvar ec = new EC('curve25519');\n\n// Generate keys\nvar key1 = ec.genKeyPair();\nvar key2 = ec.genKeyPair();\n\nvar shared1 = key1.derive(key2.getPublic());\nvar shared2 = key2.derive(key1.getPublic());\n\nconsole.log('Both shared secrets are BN instances');\nconsole.log(shared1.toString(16));\nconsole.log(shared2.toString(16));\n```\n\nthree and more members:\n```javascript\nvar EC = require('elliptic').ec;\nvar ec = new EC('curve25519');\n\nvar A = ec.genKeyPair();\nvar B = ec.genKeyPair();\nvar C = ec.genKeyPair();\n\nvar AB = A.getPublic().mul(B.getPrivate())\nvar BC = B.getPublic().mul(C.getPrivate())\nvar CA = C.getPublic().mul(A.getPrivate())\n\nvar ABC = AB.mul(C.getPrivate())\nvar BCA = BC.mul(A.getPrivate())\nvar CAB = CA.mul(B.getPrivate())\n\nconsole.log(ABC.getX().toString(16))\nconsole.log(BCA.getX().toString(16))\nconsole.log(CAB.getX().toString(16))\n```\n\nNOTE: `.derive()` returns a [BN][1] instance.\n\n## Supported curves\n\nElliptic.js support following curve types:\n\n* Short Weierstrass\n* Montgomery\n* Edwards\n* Twisted Edwards\n\nFollowing curve 'presets' are embedded into the library:\n\n* `secp256k1`\n* `p192`\n* `p224`\n* `p256`\n* `p384`\n* `p521`\n* `curve25519`\n* `ed25519`\n\nNOTE: That `curve25519` could not be used for ECDSA, use `ed25519` instead.\n\n### Implementation details\n\nECDSA is using deterministic `k` value generation as per [RFC6979][0]. Most of\nthe curve operations are performed on non-affine coordinates (either projective\nor extended), various windowing techniques are used for different cases.\n\nAll operations are performed in reduction context using [bn.js][1], hashing is\nprovided by [hash.js][2]\n\n### Related projects\n\n* [eccrypto][3]: isomorphic implementation of ECDSA, ECDH and ECIES for both\n  browserify and node (uses `elliptic` for browser and [secp256k1-node][4] for\n  node)\n\n#### LICENSE\n\nThis software is licensed under the MIT License.\n\nCopyright Fedor Indutny, 2014.\n\nPermission is hereby granted, free of charge, to any person obtaining a\ncopy of this software and associated documentation files (the\n\"Software\"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to permit\npersons to whom the Software is furnished to do so, subject to the\nfollowing conditions:\n\nThe above copyright notice and this permission notice shall be included\nin all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\nOR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN\nNO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,\nDAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR\nOTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE\nUSE OR OTHER DEALINGS IN THE SOFTWARE.\n\n[0]: http://tools.ietf.org/html/rfc6979\n[1]: https://github.com/indutny/bn.js\n[2]: https://github.com/indutny/hash.js\n[3]: https://github.com/bitchan/eccrypto\n[4]: https://github.com/wanderer/secp256k1-node\n",
+  "readmeFilename": "README.md",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/indutny/elliptic.git"
