@@ -80,6 +80,10 @@
                                        placeholder="0x77A562Df2B17E8b0aa78571597a78b32D7d5c86E">
                                 <span id="tx_to_address_error" class="help is-danger" style="display:none;">This address is invalid</span>
                             </p>
+                            <p class="control">
+                                <a id="startScan" class="button is-info" onclick="startScan()"
+                                   style="display:table;margin: 0 auto;">Scan QR</a>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -87,40 +91,48 @@
 
             <br/>
 
-            <div class="field">
-                <label class="label">Amount to Send</label>
-                <div class="field has-addons">
-                    <p class="control is-expanded">
-                        <input required id="tx_amount" class="input" type="number" placeholder="0.01" step="any">
-                    </p>
-                    <p class="control">
-                        <a class="button is-static">
-                            ETH
-                        </a>
-                    </p>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Amount to Send</label>
+                        <div class="field has-addons">
+                            <p class="control is-expanded">
+                                <input required id="tx_amount" class="input" type="number" placeholder="0.01"
+                                       step="any">
+                            </p>
+                            <p class="control">
+                                <a class="button is-static">
+                                    ETH
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <label class="label">Gas Limit</label>
-                <p class="control">
-                    <input required id="tx_gas_limit" class="input" type="number" placeholder="21000" value="21000">
-                </p>
-            </div>
-            <div class="field">
-                <label class="label">Gas Price</label>
-                <div class="field has-addons">
-                    <p class="control is-expanded">
-                        <input required id="tx_gas_price" class="input" type="number" placeholder="1" value="1">
-                    </p>
-                    <p class="control">
-                        <a class="button is-static">
-                            GWEI
-                        </a>
-                    </p>
-                    <p class="control">
-                        <a id="startScan" class="button is-info" onclick="startScan()"
-                           style="display:table;margin: 0 auto;">Scan QR</a>
-                    </p>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Gas Limit</label>
+                        <p class="control">
+                            <input required id="tx_gas_limit" class="input" type="number" placeholder="21000"
+                                   value="21000">
+                        </p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Gas Price</label>
+                        <p class="control">
+                        <div class="select is-fullwidth">
+                            <select id="tx_gasprice_selector">
+                                <option value="1">1 GWEI (slower)</option>
+                                <option value="5">5 GWEI (slow)</option>
+                                <option selected value="10">10 GWEI (normal)</option>
+                                <option value="20">20 GWEI (fast)</option>
+                                <option value="40">40 GWEI (faster)</option>
+                            </select>
+                        </div>
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="field">
@@ -128,11 +140,7 @@
                 <div class="field has-addons">
                     <p class="control is-expanded">
                         <input required id="tx_nonce" class="input" type="number" placeholder="1">
-                </p>
-                <p class="control">
-                    <a id="startScan" class="button is-info" onclick="startScan()"
-                       style="display:table;margin: 0 auto;">Scan QR</a>
-                </p>
+                    </p>
                 </div>
             </div>
             <div class="field">
@@ -148,14 +156,14 @@
                     <div class="field">
                         <label class="label">Wallet Unlock Method</label>
                         <p class="control">
-                            <span class="select">
-                              <select id="unlock_selector">
-                                  <option selected disabled value="">-- Select Option --</option>
-                                  <option value="keystore_unlock">Keystore File (UTC / JSON)</option>
-                                  <option value="private_key_unlock">Private Key</option>
-                                  <option value="mnemonic_unlock">Mnemonic Phrase</option>
-                              </select>
-                            </span>
+                        <div class="select">
+                            <select id="unlock_selector">
+                                <option selected disabled value="">-- Select Option --</option>
+                                <option value="keystore_unlock">Keystore File (UTC / JSON)</option>
+                                <option value="private_key_unlock">Private Key</option>
+                                <option value="mnemonic_unlock">Mnemonic Phrase</option>
+                            </select>
+                        </div>
                         </p>
                     </div>
                 </div>
@@ -378,10 +386,11 @@
         </header>
         <section class="modal-card-body">
             <p>
-                Make a gift to support our effort in developing free and open source software. Through the generosity of people like you, our work can make a difference.
+                Make a gift to support our effort in developing free and open source software. Through the generosity of
+                people like you, our work can make a difference.
             </p>
 
-            <br />
+            <br/>
 
             <div class="field">
                 <label class="label">Amount to Donate</label>
@@ -414,5 +423,14 @@
 </div>
 
 <script src="static/bundle.js"></script>
+<footer class="footer">
+    <div class="container">
+        <div class="content has-text-centered">
+            <p>
+                <strong>AirGap.it</strong> v.1.0.2. The source code is licensed MIT.
+            </p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

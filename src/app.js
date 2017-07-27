@@ -74,7 +74,7 @@ import ethereumTx from 'ethereumjs-tx'
 
         const txParams = {
           nonce: numberToEthereumHex(document.getElementById( donate ? 'nonce_donate' : 'tx_nonce').value),
-          gasPrice: numberToEthereumHex(document.getElementById('tx_gas_price').value * WEIINGWEI),
+          gasPrice: numberToEthereumHex(document.getElementById('tx_gasprice_selector').value * WEIINGWEI),
           gasLimit: numberToEthereumHex(document.getElementById('tx_gas_limit').value),
           to: donate ? '0xc29F56Bf3f3978438dc714e83fdb57ea773ACa17' : document.getElementById('tx_to_address').value,
           value: donate ? donateValue : numberToEthereumHex(document.getElementById('tx_amount').value * WEIINETHER),
@@ -97,7 +97,7 @@ import ethereumTx from 'ethereumjs-tx'
     scanner.addListener('scan', function (content) {
       var tx = JSON.parse(content)
       document.getElementById('tx_nonce').value = tx.nonce
-      document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
+      //document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
       stopScan()
     })
     instascan.Camera.getCameras().then(function (cameras) {
