@@ -10,20 +10,6 @@ import ethereumTx from 'ethereumjs-tx'
   const WEIINETHER = 1000000000000000000
   const WEIINGWEI = 1000000000
 
-  const numberToEthereumHex = function (payload) {
-    try {
-      var number
-      if (isNaN(payload)) {
-        number = parseInt(payload)
-      } else {
-        number = payload
-      }
-      return '0x' + number.toString(16)
-    } catch (e) {
-      return '0x'
-    }
-  }
-
   const validateAddress = new RegExp('^(0x)?[0-9a-fA-F]{40}$')
 
   var scanner
@@ -73,11 +59,11 @@ import ethereumTx from 'ethereumjs-tx'
       window.unlockWallet(function (wallet) {
 
         const txParams = {
-          nonce: numberToEthereumHex(document.getElementById( donate ? 'nonce_donate' : 'tx_nonce').value),
-          gasPrice: numberToEthereumHex(document.getElementById('tx_gasprice_selector').value * WEIINGWEI),
-          gasLimit: numberToEthereumHex(document.getElementById('tx_gas_limit').value),
+          nonce: parseInt(document.getElementById( donate ? 'nonce_donate' : 'tx_nonce').value),
+          gasPrice: parseInt(document.getElementById('tx_gasprice_selector').value * WEIINGWEI),
+          gasLimit: parseInt(document.getElementById('tx_gas_limit').value),
           to: donate ? '0xc29F56Bf3f3978438dc714e83fdb57ea773ACa17' : document.getElementById('tx_to_address').value,
-          value: donate ? donateValue : numberToEthereumHex(document.getElementById('tx_amount').value * WEIINETHER),
+          value: donate ? parseInt(donateValue) : parseInt(document.getElementById('tx_amount').value) * WEIINETHER,
           data: document.getElementById('tx_data').value,
           // EIP 155 chainId - mainnet: 1, ropsten: 3
           chainId: 1
