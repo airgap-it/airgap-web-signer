@@ -2,13 +2,17 @@
 
 A pure javascript ethereum signer client side offline app. Easy to review. Uses on purpose CSS only framework (bulma). Gets build with browserify.
 
-# Install
+## How To Run
+### 1. Install
 `npm install`
 
-# Build
+### 2. Build
 `npm run build`
 
-# Develop
+### 3. Run
+Go to the signer directory and open `index.html`
+
+## Develop
 `npm run watch`
 
 # Was this App of any help?
