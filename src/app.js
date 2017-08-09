@@ -150,7 +150,7 @@ import ethereumTx from 'ethereumjs-tx'
       unlock_methods[i].style.display = 'none'
     }
 
-    const requiredUnlockFields = this.getElementsByClassName('required_unlock_field')
+    const requiredUnlockFields = document.getElementsByClassName('required_unlock_field')
     for (var i = 0; i < requiredUnlockFields.length; i++) {
       requiredUnlockFields[i].required = false
     }

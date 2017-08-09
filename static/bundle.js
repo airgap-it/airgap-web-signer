@@ -72647,7 +72647,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       unlock_methods[i].style.display = 'none';
     }
 
-    var requiredUnlockFields = this.getElementsByClassName('required_unlock_field');
+    var requiredUnlockFields = document.getElementsByClassName('required_unlock_field');
     for (var i = 0; i < requiredUnlockFields.length; i++) {
       requiredUnlockFields[i].required = false;
     }
