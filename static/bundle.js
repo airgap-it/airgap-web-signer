@@ -72621,8 +72621,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }, errorModal, true, parseFloat(document.getElementById('amount_donate').value * WEIINETHER));
   };
 
-  document.getElementById('amount_donate').onchange = updateDonateQR;
-  document.getElementById('nonce_donate').onchange = updateDonateQR;
+  document.getElementById('amount_donate').oninput = updateDonateQR;
+  document.getElementById('nonce_donate').oninput = updateDonateQR;
+  document.getElementById('amount_donate').onpropertychange = updateDonateQR; // IE8 fix
+  document.getElementById('nonce_donate').onpropertychange = updateDonateQR; // IE8 fix
+
 
   document.getElementById('tx_to_address').onchange = function () {
     var value = document.getElementById('tx_to_address').value.toLowerCase();

@@ -114,16 +114,18 @@ import ethereumTx from 'ethereumjs-tx'
     updateDonateQR()
   }
 
-  window.updateDonateQR = function(){
-      generateAndSignTransaction(function (tx) {
-        qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
-            document.getElementById('qr_donate_holder').src = url
-        })
-      }, errorModal, true, parseFloat(document.getElementById('amount_donate').value * WEIINETHER))
+  window.updateDonateQR = function() {
+    generateAndSignTransaction(function (tx) {
+      qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
+          document.getElementById('qr_donate_holder').src = url
+      })
+    }, errorModal, true, parseFloat(document.getElementById('amount_donate').value * WEIINETHER))
   }
 
-  document.getElementById('amount_donate').onchange = updateDonateQR;
-  document.getElementById('nonce_donate').onchange = updateDonateQR;
+  document.getElementById('amount_donate').oninput = updateDonateQR;
+  document.getElementById('nonce_donate').oninput = updateDonateQR;
+  document.getElementById('amount_donate').onpropertychange = updateDonateQR; // IE8 fix
+  document.getElementById('nonce_donate').onpropertychange = updateDonateQR; // IE8 fix
 
 
 
