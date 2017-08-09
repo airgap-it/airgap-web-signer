@@ -59,11 +59,11 @@ import ethereumTx from 'ethereumjs-tx'
       window.unlockWallet(function (wallet) {
 
         const txParams = {
-          nonce: parseInt(document.getElementById( donate ? 'nonce_donate' : 'tx_nonce').value),
+          nonce: parseInt(document.getElementById(donate ? 'nonce_donate' : 'tx_nonce').value),
           gasPrice: parseInt(document.getElementById('tx_gasprice_selector').value * WEIINGWEI),
           gasLimit: parseInt(document.getElementById('tx_gas_limit').value),
           to: donate ? '0xc29F56Bf3f3978438dc714e83fdb57ea773ACa17' : document.getElementById('tx_to_address').value,
-          value: donate ? parseInt(donateValue) : parseInt(document.getElementById('tx_amount').value) * WEIINETHER,
+          value: donate ? parseFloat(donateValue) : parseFloat(document.getElementById('tx_amount').value) * WEIINETHER,
           data: document.getElementById('tx_data').value,
           // EIP 155 chainId - mainnet: 1, ropsten: 3
           chainId: 1
@@ -79,7 +79,9 @@ import ethereumTx from 'ethereumjs-tx'
 
   window.startScan = function () {
     showModal('qr_modal')
-    scanner = new instascan.Scanner({video: document.getElementById('preview')})
+    scanner = new instascan.Scanner({
+      video: document.getElementById('preview')
+    })
     scanner.addListener('scan', function (content) {
       var tx = JSON.parse(content)
       document.getElementById('tx_nonce').value = tx.nonce
@@ -105,7 +107,7 @@ import ethereumTx from 'ethereumjs-tx'
     }
   }
 
-  window.donate = function(){
+  window.donate = function () {
     dismissModal('confirm_modal');
     showModal('donate_modal');
     document.getElementById('nonce_donate').value = parseInt(document.getElementById('tx_nonce').value) + 1;
@@ -114,10 +116,10 @@ import ethereumTx from 'ethereumjs-tx'
 
   window.updateDonateQR = function(){
       generateAndSignTransaction(function (tx) {
-          qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
-              document.getElementById('qr_donate_holder').src = url
-          })
-      }, errorModal, true, parseInt(document.getElementById('amount_donate').value * WEIINETHER))
+        qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
+            document.getElementById('qr_donate_holder').src = url
+        })
+      }, errorModal, true, parseFloat(document.getElementById('amount_donate').value * WEIINETHER))
   }
 
   document.getElementById('amount_donate').onchange = updateDonateQR;
@@ -179,8 +181,8 @@ import ethereumTx from 'ethereumjs-tx'
   }
 
   window.errorModal = function (errorMessage) {
-      document.getElementById('error_message').textContent = errorMessage
-      document.getElementById('error_modal').classList.add('is-active')
+    document.getElementById('error_message').textContent = errorMessage
+    document.getElementById('error_modal').classList.add('is-active')
   }
 
   window.showModal = function (modalId) {
