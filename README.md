@@ -3,6 +3,9 @@
 A pure javascript ethereum signer client side offline app. Easy to review. Uses on purpose CSS only framework (bulma). Gets build with browserify.
 
 ## How To Run
+
+For a more complete step by step installation instruction and how to do a secure transaction with AirGap Read the following [tutorial.](https://airgap.it/how-to-create-a-complete-transaction-with-airgap-tutorial/)
+
 ### 1. Install
 `npm install`
 
