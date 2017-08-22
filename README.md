@@ -15,6 +15,36 @@ For a more complete step by step installation instruction and how to do a secure
 ### 3. Run
 Go to the signer directory and open `index.html`
 
+If you want to use the QR Scanner, please read the "QR Scanner" section in the caveats down below.
+
+## Caveats
+
+### Browser compatibility
+
+QR Scanning is currently not supported by Safari and Internet Explorer. Please use another browser to use this feature.
+
+### QR Scanner
+
+Browsers do not allow html files opened with the file:// protocol to access the camera. This means you need to start a small server to serve the `index.html` file. We recommend one of the following ways:
+
+#### Using python
+
+```
+$ python -m"SimpleHTTPServer"
+```
+
+#### Using npm
+
+Installation:
+```
+$ npm i http-server -g
+```
+
+Usage:
+```
+$ http-server
+```
+
 ## Develop
 `npm run watch`
 

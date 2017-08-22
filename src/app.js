@@ -38,7 +38,7 @@ import ethereumTx from 'ethereumjs-tx'
           reader.readAsText(document.getElementById('keystore_unlock_file').files[0])
           break
         case 'private_key_unlock':
-          const wallet = ethereumjsWallet.fromPrivateKey(Buffer.from(document.getElementById('private_key_unlock_key').value.replace('0x',''), 'hex'))
+          const wallet = ethereumjsWallet.fromPrivateKey(Buffer.from(document.getElementById('private_key_unlock_key').value.replace('0x', ''), 'hex'))
           successCallback(wallet)
           break
         case 'mnemonic_unlock':
@@ -78,25 +78,31 @@ import ethereumTx from 'ethereumjs-tx'
   }
 
   window.startScan = function () {
-    showModal('qr_modal')
-    scanner = new instascan.Scanner({
-      video: document.getElementById('preview')
-    })
-    scanner.addListener('scan', function (content) {
-      var tx = JSON.parse(content)
-      document.getElementById('tx_nonce').value = tx.nonce
-      //document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
-      stopScan()
-    })
-    instascan.Camera.getCameras().then(function (cameras) {
-      if (cameras.length > 0) {
-        scanner.start(cameras[0])
-      } else {
-        console.error('No cameras found.')
-      }
-    }).catch(function (e) {
-      console.error(e)
-    })
+    if (!navigator.mediaDevices) {
+      showModal('qr_not_supported')
+    } else if (isFileProtocol()) {
+      showModal('file_protocol_detected')
+    } else {
+      showModal('qr_modal')
+      scanner = new instascan.Scanner({
+        video: document.getElementById('preview')
+      })
+      scanner.addListener('scan', function (content) {
+        var tx = JSON.parse(content)
+        document.getElementById('tx_nonce').value = tx.nonce
+        //document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
+        stopScan()
+      })
+      instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0])
+        } else {
+          console.error('No cameras found.')
+        }
+      }).catch(function (e) {
+        console.error(e)
+      })
+    }
   }
 
   window.stopScan = function () {
@@ -114,10 +120,10 @@ import ethereumTx from 'ethereumjs-tx'
     updateDonateQR()
   }
 
-  window.updateDonateQR = function() {
+  window.updateDonateQR = function () {
     generateAndSignTransaction(function (tx) {
       qrcode.toDataURL(tx.serialize().toString('hex'), function (err, url) {
-          document.getElementById('qr_donate_holder').src = url
+        document.getElementById('qr_donate_holder').src = url
       })
     }, errorModal, true, parseFloat(document.getElementById('amount_donate').value * WEIINETHER))
   }
@@ -193,6 +199,10 @@ import ethereumTx from 'ethereumjs-tx'
 
   window.dismissModal = function (modalId) {
     document.getElementById(modalId).classList.remove('is-active')
+  }
+
+  window.isFileProtocol = function () {
+    return window.location.protocol === 'file:'
   }
 
   document.getElementById('disclaimer_modal').classList.add('is-active')
