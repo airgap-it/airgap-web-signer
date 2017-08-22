@@ -34586,9 +34586,11 @@ exports.defineProperties = function (self, fields, data) {
 
   fields.forEach(function (field, i) {
     self._fields.push(field.name);
+
     function getter() {
       return self.raw[i];
     }
+
     function setter(v) {
       v = exports.toBuffer(v);
 
@@ -72577,25 +72579,31 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   };
 
   window.startScan = function () {
-    showModal('qr_modal');
-    scanner = new _instascan2.default.Scanner({
-      video: document.getElementById('preview')
-    });
-    scanner.addListener('scan', function (content) {
-      var tx = JSON.parse(content);
-      document.getElementById('tx_nonce').value = tx.nonce;
-      //document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
-      stopScan();
-    });
-    _instascan2.default.Camera.getCameras().then(function (cameras) {
-      if (cameras.length > 0) {
-        scanner.start(cameras[0]);
-      } else {
-        console.error('No cameras found.');
-      }
-    }).catch(function (e) {
-      console.error(e);
-    });
+    if (!navigator.mediaDevices) {
+      showModal('qr_not_supported');
+    } else if (isFileProtocol()) {
+      showModal('file_protocol_detected');
+    } else {
+      showModal('qr_modal');
+      scanner = new _instascan2.default.Scanner({
+        video: document.getElementById('preview')
+      });
+      scanner.addListener('scan', function (content) {
+        var tx = JSON.parse(content);
+        document.getElementById('tx_nonce').value = tx.nonce;
+        //document.getElementById('tx_gas_price').value = tx.gasPrice / WEIINGWEI
+        stopScan();
+      });
+      _instascan2.default.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          console.error('No cameras found.');
+        }
+      }).catch(function (e) {
+        console.error(e);
+      });
+    }
   };
 
   window.stopScan = function () {
@@ -72691,6 +72699,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
   window.dismissModal = function (modalId) {
     document.getElementById(modalId).classList.remove('is-active');
+  };
+
+  window.isFileProtocol = function () {
+    return window.location.protocol === 'file:';
   };
 
   document.getElementById('disclaimer_modal').classList.add('is-active');

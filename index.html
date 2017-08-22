@@ -423,6 +423,42 @@
     </div>
 </div>
 
+<div id="qr_not_supported" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">QR Scanner not supported</p>
+            <button class="delete" onclick="dismissModal('qr_not_supported')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>
+                Scanning QR codes is not supported by your browser. Please use Chrome or Firefox to use this feature.
+            </p>
+        </section>
+    </div>
+</div>
+
+<div id="file_protocol_detected" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">File protocol detected</p>
+            <button class="delete" onclick="dismissModal('file_protocol_detected')"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>
+                Due to security restrictions, browsers do not allow camera access when opening html files directly. You need to start a small
+                server to serve this file. Please read our readme on how to do that.
+            </p>
+            <p>
+                If you have already started the server, make sure you access this page over
+                <a href="http://localhost:8000">http://localhost:8000</a> (or whatever port your server uses) rather
+                than the <b>file://</b> protocol.
+            </p>
+        </section>
+    </div>
+</div>
+
 <script src="static/bundle.js"></script>
 <footer class="footer">
     <div class="container">
